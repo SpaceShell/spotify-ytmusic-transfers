@@ -10,7 +10,7 @@ export const authOptions = {
     SpotifyProvider({
       clientId,
       clientSecret,
-      authorization: "https://accounts.spotify.com/authorize?scope=user-read-email user-read-private",
+      authorization: "https://accounts.spotify.com/authorize?scope=user-read-email user-read-private playlist-read-private user-library-read",
     }),
   ],
   callbacks: {
@@ -24,7 +24,40 @@ export const authOptions = {
       session.accessToken = token.accessToken;
       return session;
     },
-  },
+    async getProfile(accessToken) {
+      const response = await fetch('https://api.spotify.com/v1/me', {
+        headers: {
+          Authorization: 'Bearer ' + accessToken
+        }
+      });
+    
+      const data = await response.json();
+      console.log(data)
+      return data
+    },
+    async getPlaylists(accessToken) {
+      const response = await fetch('https://api.spotify.com/v1/me/playlists', {
+        headers: {
+          Authorization: 'Bearer ' + accessToken
+        }
+      });
+    
+      const data = await response.json();
+      console.log(data)
+      return data
+    },
+    async getLikedTracks(accessToken) {
+      const response = await fetch('https://api.spotify.com/v1/me/tracks', {
+        headers: {
+          Authorization: 'Bearer ' + accessToken
+        }
+      });
+    
+      const data = await response.json();
+      console.log(data)
+      return data
+    }
+    },
   secret: process.env.NEXTAUTH_SECRET,
 };
 
