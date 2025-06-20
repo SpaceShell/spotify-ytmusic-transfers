@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+@theme {
+    --font-inter: "Inter", "sans-serif"; 
+}
+
+.fade-up {
+    animation: fade-up 3s ease 0s 1;
+    position: absolute;
+}
+
+@keyframes fade-up {
+    0% {opacity: 0%; top: 35px;}
+    100% {opacity: 100%; top: 0px;}
+}

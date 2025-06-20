@@ -1,15 +1,15 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from 'next/image'
 import { useSession, signIn, signOut } from "next-auth/react"
 import { authOptions } from "./api/auth/[...nextauth]/route"
-import { LoginButton } from "./login-button"
-import { PlaylistBlock } from './playlist-block'
+import { SpotifyLoginButton } from "./spotify-login-button"
+import { YTMusicLoginButton } from "./ytmusic-login-button"
+import { Navbar } from "./navbar"
 
 export function Login() {
   const { data: session } = useSession()
-  const [playlists, setPlaylists] = useState([])
-  const [likedTracks, setLikedTracks] = useState([])
 
   useEffect(() => {
     if (session) {
@@ -19,43 +19,26 @@ export function Login() {
             signOut()
           }
         })
-
-        authOptions.callbacks.getPlaylists(session.accessToken).then((data) => {
-          setPlaylists(data.items)
-        })
-
-        authOptions.callbacks.getLikedTracks(session.accessToken).then((data) => {
-          setLikedTracks(data)
-        })
     }
   }, [session])
 
   return (
-    <div className="m-10">
-      <h1 className="font-black">MusiTransfer</h1>
-      <LoginButton clickFunc={session ? () => signOut() : () => signIn("spotify")} text={`${session ? "Sign Out" : "Sign in"}`}></LoginButton>
-
-      <h2 className="font-bold text-2xl">All Spotify Playlists:</h2>
-      <div className="gap-10 flex flex-wrap w-180">
-        {session && 
-        <PlaylistBlock 
-          playlistImage={"/LikeImage.png"}
-          playlistName={"Liked Songs"}
-          playlistOwner={session.user.name}
-          playlistTrackCount={likedTracks.total}
-          imageAlt={'Heart'}
-        ></PlaylistBlock>}
-        {playlists.map((playlist, index) => (
-          <PlaylistBlock
-            key={index}
-            playlistImage={playlist.images[0].url}
-            playlistName={playlist.name}
-            playlistOwner={playlist.owner.display_name}
-            playlistTrackCount={playlist.tracks.total}
-            imageAlt={'Mosaic image of album art from four songs in the playlist'}
-          ></PlaylistBlock>
-        ))}
-      </div>
+    <div>
+        <Navbar></Navbar>
+        <div className="mb-40 mt-20 mx-60 flex gap-55 relative">
+            <div>
+                <h1 className="font-bold text-6xl font-inter">Welcome to <br></br><span className="text-blue-700">Musi</span>Move</h1>
+                <p className="mt-5 text-2xl">Freely compare and transfer any <br></br>of your tracks or playlists</p>
+                <p className="mt-25 mb-5"><span className="font-bold">Login</span> to a streaming platform to begin transferring</p>
+                <div className="flex gap-10">
+                    <SpotifyLoginButton></SpotifyLoginButton>
+                    <YTMusicLoginButton></YTMusicLoginButton>
+                </div>
+            </div>
+            <div>
+                <Image className="fade-up" src="/MusicImage.png" width={380} height={380} alt="Two music notes and a music album with a headphones icon"></Image>
+            </div>
+        </div>
     </div>
   );
 }
