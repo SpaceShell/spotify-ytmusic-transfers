@@ -10,7 +10,14 @@ export const authOptions = {
     SpotifyProvider({
       clientId,
       clientSecret,
-      authorization: "https://accounts.spotify.com/authorize?scope=user-read-email user-read-private playlist-read-private user-library-read",
+      authorization: {
+        url: "https://accounts.spotify.com/authorize",
+        params: {
+          scope: "user-read-email user-read-private playlist-read-private user-library-read",
+          prompt: "consent",
+          show_dialog: "true", 
+        },
+      }
     }),
   ],
   callbacks: {
@@ -32,7 +39,6 @@ export const authOptions = {
       });
     
       const data = await response.json();
-      console.log(data)
       return data
     },
     async getPlaylists(accessToken) {
@@ -43,7 +49,6 @@ export const authOptions = {
       });
     
       const data = await response.json();
-      console.log(data)
       return data
     },
     async getLikedTracks(accessToken) {
@@ -54,7 +59,6 @@ export const authOptions = {
       });
     
       const data = await response.json();
-      console.log(data)
       return data
     }
     },
