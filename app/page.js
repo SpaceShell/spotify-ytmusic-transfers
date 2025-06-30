@@ -21,7 +21,7 @@ export default function Home() {
 					</div>
 				</div>
 				<div>
-					<Image className="fade-up" src="/MusicImage.png" width={380} height={380} alt="Two music notes and a music album with a headphones icon"></Image>
+					<Image className="fade-up" src="/MusicImage.png" width={380} height={380} alt="Two music notes and a music album with a headphones icon" priority={true}></Image>
 				</div>
 		</div>
 	  </SessionProvider>

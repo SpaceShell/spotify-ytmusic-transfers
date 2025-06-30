@@ -8,7 +8,7 @@ import { CiLogout } from "react-icons/ci";
 import { useEffect, useRef, useState } from "react";
 
 export function Navbar() {
-    const { data: sessionSpotify, status } = useSession()
+    const { data: sessionSpotify } = useSession()
     const [showSpotifySignOut, setShowSpotifySignOut] = useState(false)
     const signOutSpotify = useRef(undefined)
 
@@ -44,16 +44,16 @@ export function Navbar() {
                         <Image
                             id="spotifyLogo"
                             src="/SpotifyLogo.svg"
-                            className='w-10 h-10'
+                            className='w-10 h-10 cursor-pointer'
                             width={150} height={150}
                             alt="Spotify logo"
-                            priority={false}
+                            priority={true}
                             onClick={() => {setShowSpotifySignOut(!showSpotifySignOut)}}
                         ></Image>
                         {
                             showSpotifySignOut &&
                             <button 
-                                className="w-35 py-3 pl-6 pr-5 top-12 right-0 absolute rounded-xl shadow-md flex justify-between items-center hover:bg-neutral-100"
+                                className="w-35 py-3 pl-6 pr-5 top-12 right-0 absolute rounded-xl shadow-md border border-neutral-100 flex justify-between items-center hover:bg-neutral-100 cursor-pointer"
                                 onClick={() => {signOut({ callbackUrl: '/' })}}
                                 ref={signOutSpotify}
                             >
@@ -63,7 +63,7 @@ export function Navbar() {
                         }
                     </div>
                 }
-                <MdOutlineDarkMode className="w-10 h-10"/>
+                <MdOutlineDarkMode className="w-10 h-10 cursor-pointer"/>
             </div>
         </nav>
     )
