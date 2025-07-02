@@ -31,13 +31,13 @@ export function Navbar() {
     }, [showSpotifySignOut])
 
     return (
-        <nav className="flex justify-between items-center py-6 px-10">
+        <nav className="flex justify-between items-center py-5 px-10">
             <div>
                 <Link href={"/"}>
                     <Image src="/MusiMoveFullLogo.png" height={50} width={200} alt="MusiMove Logo" unoptimized={true} priority={false}></Image>
                 </Link>
             </div>
-            <div className="flex gap-5">
+            <div className="flex gap-5 items-center">
                 {
                     sessionSpotify &&
                     <div className="relative">
@@ -53,12 +53,12 @@ export function Navbar() {
                         {
                             showSpotifySignOut &&
                             <button 
-                                className="w-35 py-3 pl-6 pr-5 top-12 right-0 absolute rounded-xl shadow-md border border-neutral-100 flex justify-between items-center hover:bg-neutral-100 cursor-pointer"
+                                className="w-35 py-3 pl-5 pr-6 top-12 right-0 absolute rounded-xl shadow-md border border-neutral-100 flex justify-between items-center hover:bg-neutral-100 cursor-pointer"
                                 onClick={() => {signOut({ callbackUrl: '/' })}}
                                 ref={signOutSpotify}
                             >
-                                <p className="text-left">Sign Out</p>
                                 <CiLogout className="w-5 h-5" />
+                                <p className="text-left">Sign Out</p>
                             </button>
                         }
                     </div>

@@ -5,7 +5,7 @@ import { getRelativeLuminance } from './color-formula';
 import { useEffect, useState } from 'react';
 import { CgSpinner } from "react-icons/cg";
 
-export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playlistTrackCount, imageAlt, index}) {
+export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playlistTrackCount, imageAlt, index, view}) {
 	const [mainColorBackground, setMainColorBackground] = useState("rgb(65, 65, 65)")
 	const [playlistButtonClass, setPlaylistButtonClass] = useState("")
 	const [clicked, setClicked] = useState(false)
@@ -52,7 +52,6 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 			setMainColorBackground('rgb(126, 36, 36)')
 			setLoaded(true)
 		} else if (playlistImage == "/EmptyPlaylist.png") {
-			console.log(playlistImage, index)
 			setLoaded(true)
 		} else {
 			getImageColor()
@@ -67,7 +66,11 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 						background-color: rgb(from ${mainColorBackground} r g b / 0.04);
 					}
 					.playlist${index}Clicked:hover {
-						outline-color: rgb(from ${mainColorBackground} r g b / 0.5);
+						outline-color: rgb(from ${mainColorBackground} r g b / 0.8);
+						z-index: 1;
+					}
+					.playlist${index}Clicked {
+						background-color: rgba(65, 65, 65, 0.07);
 					}
 					.playlist${index}Button {
 						color: ${mainColorBackground};
@@ -82,20 +85,38 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 
 			{
 			loaded ? 
-				<div 
-				className={`playlist${index} h-max min-w-40 py-6 px-6 gap-5 border border-neutral-100 flex transition shadow-md rounded-sm outline-neutral-400 playlist${index}Clicked ${clicked ? `outline-4` : ''}`}
-				onMouseEnter={() => {setPlaylistButtonClass(`playlist${index}Button`)}}
-				onMouseLeave={() => {setPlaylistButtonClass("")}}
-				onClick={() => {setClicked(!clicked)}}
-				>
-					<Image src={playlistImage} className='w-30 h-30' width={150} height={150} alt={imageAlt} priority={true} unoptimized></Image>
-					<div className='w-30'>
-						<p className='font-bold whitespace-nowrap text-ellipsis overflow-hidden text-lg'>{playlistName}</p>
-						<p className='mt-1 text-sm'>{playlistOwner}</p>
-						<p className='text-sm'>{playlistTrackCount} {playlistTrackCount == 1 ? "song" : "songs"}</p>
-						<button className={`${playlistButtonClass} mt-3 font-semibold border-3 rounded-lg py-1 px-3 text-sm cursor-pointer bg-transparent border-stone-800 text-stone-800 transition-colors`}>View Songs</button>
+				view == "grid" ?
+					<div 
+					className={`playlist${index} h-max min-w-40 py-6 px-6 gap-5 flex transition shadow-md rounded-sm outline-neutral-500 ${clicked ? `outline-4 playlist${index}Clicked` : ''}`}
+					onMouseEnter={() => {setPlaylistButtonClass(`playlist${index}Button`)}}
+					onMouseLeave={() => {setPlaylistButtonClass("")}}
+					onClick={() => {setClicked(!clicked)}}
+					>
+						<Image src={playlistImage} className='w-30 h-30' width={150} height={150} alt={imageAlt} priority={true} unoptimized></Image>
+						<div className='w-30'>
+							<p className='font-bold whitespace-nowrap text-ellipsis overflow-hidden text-lg'>{playlistName}</p>
+							<p className='mt-1 text-sm'>{playlistOwner}</p>
+							<p className='text-sm'>{playlistTrackCount} {playlistTrackCount == 1 ? "song" : "songs"}</p>
+							<button className={`${playlistButtonClass} mt-3 font-semibold border-3 rounded-lg py-1 px-3 text-sm cursor-pointer bg-transparent border-stone-800 text-stone-800 transition-colors`}>View Songs</button>
+						</div>
 					</div>
-				</div>
+				:
+					<div 
+					className={`playlist${index} w-full py-2 px-4 flex justify-between items-center transition shadow-md rounded-sm outline-neutral-500 ${clicked ? `outline-3 playlist${index}Clicked` : ''}`}
+					onMouseEnter={() => {setPlaylistButtonClass(`playlist${index}Button`)}}
+					onMouseLeave={() => {setPlaylistButtonClass("")}}
+					onClick={() => {setClicked(!clicked)}}
+					>
+						<div className='contents flex gap-5 items-center'>
+							<Image src={playlistImage} className='w-15 h-15' width={150} height={150} alt={imageAlt} priority={true} unoptimized></Image>
+							<div className='w-full'>
+								<p className='font-bold whitespace-nowrap text-ellipsis overflow-hidden text-md'>{playlistName}</p>
+								<p className='text-sm'>{playlistOwner}</p>
+								<p className='text-sm'>{playlistTrackCount} {playlistTrackCount == 1 ? "song" : "songs"}</p>
+							</div>
+						</div>
+						<button className={`${playlistButtonClass} font-semibold border-3 rounded-lg py-2 px-3 text-sm cursor-pointer bg-transparent border-stone-800 text-stone-800 transition-colors`}>View Songs</button>
+					</div>
 			: 
 				<div className={`w-full py-6 px-6 border border-neutral-100 flex justify-center items-center transition shadow-md rounded-sm outline-neutral-400`}>
 					<CgSpinner className='w-5 h-5 animate-spin'/>

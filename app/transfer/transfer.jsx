@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
 import { authOptions } from "../api/auth/[...nextauth]/route"
+import { LuRows3 } from "react-icons/lu";
+import { MdOutlineGridView } from "react-icons/md";
 import { PlaylistBlock } from './playlist-block'
 
 export function Transfer() {
@@ -15,6 +17,7 @@ export function Transfer() {
   })
   const [playlists, setPlaylists] = useState([])
   const [likedTracks, setLikedTracks] = useState([])
+  const [musicView, setMusicView] = useState("grid")
   const router = useRouter()
 
   useEffect(() => {
@@ -40,15 +43,25 @@ export function Transfer() {
     <div className="mt-5 mx-15">
         <div className="flex justify-around gap-10 mb-10">
             <section>
-                <h2 className="font-bold text-3xl font-inter mb-7">All Spotify Playlists:</h2>
-                <div className="w-175 h-130 gap-8 grid grid-cols-2 overflow-y-auto px-4 py-3">
+                <div className="flex justify-between">
+                    <h2 className="font-bold text-3xl font-inter mb-7">All Spotify Playlists:</h2>
+                    {
+                    musicView == "grid" ?
+                        <LuRows3 className="w-9 h-9 cursor-pointer" onClick={() => {setMusicView("row")}}/>
+                    :
+                        <MdOutlineGridView className="w-9 h-9 cursor-pointer" onClick={() => {setMusicView("grid")}}/>
+                    }
+                </div>
+                <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 ${musicView == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 gap-1"}`}>
                     {sessionSpotify && 
                     <PlaylistBlock 
-                    playlistImage={"/LikeImage.png"}
-                    playlistName={"Liked Songs"}
-                    playlistOwner={sessionSpotify.user.name}
-                    playlistTrackCount={likedTracks.total}
-                    imageAlt={'Heart'}
+                        playlistImage={"/LikeImage.png"}
+                        playlistName={"Liked Songs"}
+                        playlistOwner={sessionSpotify.user.name}
+                        playlistTrackCount={likedTracks.total}
+                        imageAlt={'Heart'}
+                        index={"Like"}
+                        view={musicView}
                     ></PlaylistBlock>}
                     {playlists.map((playlist, index) => (
                     <PlaylistBlock
@@ -59,6 +72,7 @@ export function Transfer() {
                         playlistTrackCount={playlist.tracks.total}
                         imageAlt={'Image of album art in a playlist'}
                         index={index}
+                        view={musicView}
                     ></PlaylistBlock>
                     ))}
                 </div>
