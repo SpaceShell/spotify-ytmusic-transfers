@@ -118,11 +118,18 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 						<button className={`${playlistButtonClass} font-semibold border-3 rounded-lg py-2 px-3 text-sm cursor-pointer bg-transparent border-stone-800 text-stone-800 transition-colors`}>View Songs</button>
 					</div>
 			: 
-				<div className={`w-full py-6 px-6 border border-neutral-100 flex justify-center items-center transition shadow-md rounded-sm outline-neutral-400`}>
-					<CgSpinner className='w-5 h-5 animate-spin'/>
-					{/* Layout spacer for equal heights among playlist elements */}
-					<div className='w-0 h-30 invisible' aria-hidden="true"></div>
-				</div>
+				view == "grid" ?
+					<div className={`w-full py-6 px-6 border border-neutral-100 flex justify-center items-center transition shadow-md rounded-sm outline-neutral-400`}>
+						<CgSpinner className='w-5 h-5 animate-spin'/>
+						{/* Layout spacer for equal heights among playlist elements */}
+						<div className='w-0 h-30 invisible' aria-hidden="true"></div>
+					</div>
+				:
+					<div 
+					className={`w-full py-2 px-4 flex justify-center items-center transition shadow-md rounded-sm outline-neutral-500`}>
+						<div className='w-0 h-15 invisible' aria-hidden="true"></div>
+						<CgSpinner className='w-5 h-5 animate-spin'/>
+					</div>
 			}
 		</>
 	);
