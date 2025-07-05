@@ -5,7 +5,7 @@ import { getRelativeLuminance } from './color-formula';
 import { useEffect, useState } from 'react';
 import { CgSpinner } from "react-icons/cg";
 
-export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playlistTrackCount, imageAlt, index, view}) {
+export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playlistTrackCount, index, view, viewTracksFunc, loadData}) {
 	const [mainColorBackground, setMainColorBackground] = useState("rgb(65, 65, 65)")
 	const [playlistButtonClass, setPlaylistButtonClass] = useState("")
 	const [clicked, setClicked] = useState(false)
@@ -27,12 +27,17 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 				img.src = json.image;
 				img.onload = () => {
 					let rgb = getMainColorFromCanvas(img);
-					let relativeLuminance = getRelativeLuminance(rgb[0], rgb[1], rgb[2])
+					let relativeLuminance = getRelativeLuminance(rgb[0], rgb[1], rgb[2]);
 
 					if (relativeLuminance > 0.75) {
-						setMainColorBackground(`rgb(${rgb[0] * 0.2},${rgb[1] * 0.2},${rgb[2] * 0.2})`);
+						let lighterBackground = `rgb(${rgb[0] * 0.2},${rgb[1] * 0.2},${rgb[2] * 0.2})`
+						setMainColorBackground(lighterBackground);
+						loadData[index] = lighterBackground;
+					} else {
+						let background = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+						setMainColorBackground(background);
+						loadData[index] = background;
 					}
-
 					setLoaded(true)
 				}
 
@@ -40,7 +45,6 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 					context.drawImage(imageObject, 0, 0, 1, 1);
 				
 					const imageData = context.getImageData(0, 0, 1, 1).data;
-					setMainColorBackground(`rgb(${imageData[0]},${imageData[1]},${imageData[2]})`);
 					return imageData
 				}
 			} catch (error) {
@@ -48,13 +52,18 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 			}
 		}
 
-		if (playlistImage == "/LikeImage.png") {
-			setMainColorBackground('rgb(126, 36, 36)')
-			setLoaded(true)
-		} else if (playlistImage == "/EmptyPlaylist.png") {
+		if (index in loadData) {
+			setMainColorBackground(loadData[index])
 			setLoaded(true)
 		} else {
-			getImageColor()
+			if (playlistImage == "/LikeImage.png") {
+				setMainColorBackground('rgb(126, 36, 36)')
+				setLoaded(true)
+			} else if (playlistImage !== "/EmptyPlaylist.png") {
+				getImageColor()
+			} else {
+				setLoaded(true)
+			}
 		}
 	}, [])
 
@@ -92,12 +101,15 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 					onMouseLeave={() => {setPlaylistButtonClass("")}}
 					onClick={() => {setClicked(!clicked)}}
 					>
-						<Image src={playlistImage} className='w-30 h-30' width={150} height={150} alt={imageAlt} priority={true} unoptimized></Image>
+						<Image src={playlistImage} className='w-30 h-30' width={150} height={150} alt={'Image of album art in a playlist'} priority={true} unoptimized></Image>
 						<div className='w-30'>
 							<p className='font-bold whitespace-nowrap text-ellipsis overflow-hidden text-lg'>{playlistName}</p>
 							<p className='mt-1 text-sm'>{playlistOwner}</p>
 							<p className='text-sm'>{playlistTrackCount} {playlistTrackCount == 1 ? "song" : "songs"}</p>
-							<button className={`${playlistButtonClass} mt-3 font-semibold border-3 rounded-lg py-1 px-3 text-sm cursor-pointer bg-transparent border-stone-800 text-stone-800 transition-colors`}>View Songs</button>
+							<button 
+							className={`${playlistButtonClass} mt-3 font-semibold border-3 rounded-lg py-1 px-3 text-sm cursor-pointer bg-transparent border-stone-800 text-stone-800 transition-colors`}
+							onClick={() => {viewTracksFunc(index, playlistName)}}
+							>View Songs</button>
 						</div>
 					</div>
 				:
@@ -108,14 +120,17 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 					onClick={() => {setClicked(!clicked)}}
 					>
 						<div className='contents flex gap-5 items-center'>
-							<Image src={playlistImage} className='w-15 h-15' width={150} height={150} alt={imageAlt} priority={true} unoptimized></Image>
+							<Image src={playlistImage} className='w-15 h-15' width={150} height={150} alt={'Image of album art in a playlist'} priority={true} unoptimized></Image>
 							<div className='w-full'>
 								<p className='font-bold whitespace-nowrap text-ellipsis overflow-hidden text-md'>{playlistName}</p>
 								<p className='text-sm'>{playlistOwner}</p>
 								<p className='text-sm'>{playlistTrackCount} {playlistTrackCount == 1 ? "song" : "songs"}</p>
 							</div>
 						</div>
-						<button className={`${playlistButtonClass} font-semibold border-3 rounded-lg py-2 px-3 text-sm cursor-pointer bg-transparent border-stone-800 text-stone-800 transition-colors`}>View Songs</button>
+						<button 
+						className={`${playlistButtonClass} font-semibold border-3 rounded-lg py-2 px-3 text-sm cursor-pointer bg-transparent border-stone-800 text-stone-800 transition-colors`}
+						onClick={() => {viewTracksFunc(index, playlistName)}}
+						>View Songs</button>
 					</div>
 			: 
 				view == "grid" ?
@@ -128,6 +143,7 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 					<div 
 					className={`w-full py-2 px-4 flex justify-center items-center transition shadow-md rounded-sm outline-neutral-500`}>
 						<div className='w-0 h-15 invisible' aria-hidden="true"></div>
+						{/* Layout spacer for equal heights among playlist elements */}
 						<CgSpinner className='w-5 h-5 animate-spin'/>
 					</div>
 			}
