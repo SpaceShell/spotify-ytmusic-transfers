@@ -1,14 +1,12 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
-import { useRouter } from "next/navigation"
-import { useSession, signOut } from "next-auth/react"
-import { authOptions } from "../api/auth/[...nextauth]/route"
-import { LuRows3 } from "react-icons/lu";
-import { MdOutlineGridView } from "react-icons/md";
-import { IoMdArrowRoundBack } from "react-icons/io";
+import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 import { PlaylistBlock } from './playlist-block';
-import { TrackBlock } from "./track-block"
+import { TrackBlock } from "./track-block";
+import { SpotifyHeader } from "./spotify-header";
 
 export function Transfer() {
   const { data: sessionSpotify } = useSession({
@@ -20,11 +18,11 @@ export function Transfer() {
   const [playlists, setPlaylists] = useState([]);
   const [likedPlaylist, setLikedPlaylist] = useState([]);
   const [musicLayout, setMusicLayout] = useState("grid");
-  const [view, setView] = useState(false)
-  const [currentSongs, setSongs] = useState([])
+  const [view, setView] = useState(null);
+  const [currentSongs, setSongs] = useState([]);
   const router = useRouter();
 
-  let playlistLoadData = useRef({})
+  let playlistLoadData = useRef({});
 
   useEffect(() => {
     if (sessionSpotify) {
@@ -46,16 +44,16 @@ export function Transfer() {
 
   const viewTracks = (playlistIndex, playlistName) => {
         if (playlistIndex == "Like") {
-            setSongs(likedPlaylist.items)
+            setSongs(likedPlaylist.items);
         } else {
             authOptions.callbacks.getPlaylistTracks(
                 sessionSpotify.accessToken, playlists[playlistIndex].tracks.href
             ).then((data) => {
-                setSongs(data.items)
-                console.log(data)
+                setSongs(data.items);
+                console.log(data);
             })
         }
-        setView(playlistName)
+        setView(playlistName);
   }
 
 
@@ -63,25 +61,15 @@ export function Transfer() {
     <div className="mt-5 mx-15">
         <div className="flex justify-around gap-10 mb-10">
             <section>
-                <div className="flex justify-between">
-                    <h2 className="font-bold text-3xl font-inter mb-7 text-ellipsis overflow-hidden">
-                        {view == false ? "All Spotify Playlists:" : view}
-                    </h2>
-                    {
-                    view == false ?
-                        musicLayout == "grid" ?
-                            <LuRows3 className="w-9 h-9 cursor-pointer" onClick={() => {setMusicLayout("row")}}/>
-                        :
-                            <MdOutlineGridView className="w-9 h-9 cursor-pointer" onClick={() => {setMusicLayout("grid")}}/>
-                    :
-                        <IoMdArrowRoundBack className="w-9 h-9 cursor-pointer" onClick={() => {
-                            setSongs([])
-                            setView(false)
-                        }}></IoMdArrowRoundBack>
-                    }
-                </div>
+                <SpotifyHeader
+                    view={view} 
+                    setViewFunc={(view) => {setView(view)}}
+                    musicLayout={musicLayout} 
+                    setMusicLayoutFunc={(layout) => {setMusicLayout(layout)}} 
+                    setSongsFunc={(songs) => {setSongs(songs)}}
+                ></SpotifyHeader>
                 {
-                view == false ?
+                view == null ?
                     <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 gap-1"}`}>
                         {sessionSpotify && 
                         <PlaylistBlock 

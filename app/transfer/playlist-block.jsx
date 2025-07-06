@@ -1,15 +1,15 @@
 "use client"
 
-import Image from 'next/image'
+import Image from 'next/image';
 import { getRelativeLuminance } from './color-formula';
 import { useEffect, useState } from 'react';
 import { CgSpinner } from "react-icons/cg";
 
 export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playlistTrackCount, index, view, viewTracksFunc, loadData}) {
-	const [mainColorBackground, setMainColorBackground] = useState("rgb(65, 65, 65)")
-	const [playlistButtonClass, setPlaylistButtonClass] = useState("")
-	const [clicked, setClicked] = useState(false)
-	const [loaded, setLoaded] = useState(false)
+	const [mainColorBackground, setMainColorBackground] = useState("rgb(65, 65, 65)");
+	const [playlistButtonClass, setPlaylistButtonClass] = useState("");
+	const [clicked, setClicked] = useState(false);
+	const [loaded, setLoaded] = useState(false);
 
 	useEffect(() => {
 		const getImageColor = async () => {
@@ -22,7 +22,7 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 				const json = await response.json();
 
 				const context = document.createElement("canvas").getContext("2d");
-				let img = document.createElement("img")
+				let img = document.createElement("img");
 				img.setAttribute('crossOrigin', ''); 
 				img.src = json.image;
 				img.onload = () => {
@@ -30,7 +30,7 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 					let relativeLuminance = getRelativeLuminance(rgb[0], rgb[1], rgb[2]);
 
 					if (relativeLuminance > 0.75) {
-						let lighterBackground = `rgb(${rgb[0] * 0.2},${rgb[1] * 0.2},${rgb[2] * 0.2})`
+						let lighterBackground = `rgb(${rgb[0] * 0.2},${rgb[1] * 0.2},${rgb[2] * 0.2})`;
 						setMainColorBackground(lighterBackground);
 						loadData[index] = lighterBackground;
 					} else {
@@ -38,31 +38,31 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 						setMainColorBackground(background);
 						loadData[index] = background;
 					}
-					setLoaded(true)
+					setLoaded(true);
 				}
 
 				let getMainColorFromCanvas = (imageObject) => {
 					context.drawImage(imageObject, 0, 0, 1, 1);
 				
 					const imageData = context.getImageData(0, 0, 1, 1).data;
-					return imageData
+					return imageData;
 				}
 			} catch (error) {
-				throw error
+				throw error;
 			}
 		}
 
 		if (index in loadData) {
-			setMainColorBackground(loadData[index])
-			setLoaded(true)
+			setMainColorBackground(loadData[index]);
+			setLoaded(true);
 		} else {
 			if (playlistImage == "/LikeImage.png") {
-				setMainColorBackground('rgb(126, 36, 36)')
-				setLoaded(true)
+				setMainColorBackground('rgb(126, 36, 36)');
+				setLoaded(true);
 			} else if (playlistImage !== "/EmptyPlaylist.png") {
-				getImageColor()
+				getImageColor();
 			} else {
-				setLoaded(true)
+				setLoaded(true);
 			}
 		}
 	}, [])
