@@ -7,12 +7,15 @@ import { authOptions } from "../api/auth/[...nextauth]/route";
 import { PlaylistBlock } from './playlist-block';
 import { TrackBlock } from "./track-block";
 import { SpotifyHeader } from "./spotify-header";
+import { YouTubeTransfer } from "./youtube-section";
 
 export function Transfer() {
   const { data: sessionSpotify } = useSession({
     required: true,
     onUnauthenticated() {
-        router.push('/');
+        if (sessionStorage.getItem("playlists") == undefined) {
+            router.push('/?authentication=false');
+        }
     }
   });
   const [playlists, setPlaylists] = useState([]);
@@ -107,10 +110,7 @@ export function Transfer() {
                     </div>
                 }
             </section>
-            <section>
-                <h2 className="font-bold text-3xl font-inter mb-7">All YouTube Music Playlists:</h2>
-                <div className="gap-10 flex flex-wrap w-180 h-130 overflow-y-auto"></div>
-            </section>
+            <YouTubeTransfer></YouTubeTransfer>
         </div>
         <button className="bg-stone-800 text-white font-bold px-6 py-3 rounded-md ml-auto mr-auto block">Transfer</button>
     </div>
