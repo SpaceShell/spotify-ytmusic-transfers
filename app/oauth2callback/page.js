@@ -12,13 +12,14 @@ export default function YouTubeSigningInPage() {
                 const url = new URL(window.location.href);
                 const params = new URLSearchParams(url.hash);
 
-                const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?access_token=${params.get("access_token")}&part=snippet&mine=true`);
+                const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?access_token=${params.get("access_token")}&part=snippet,contentDetails&mine=true`);
                 const jsonPlaylists = await response.json()
 
                 if ("error" in jsonPlaylists) {
                     router.push("/?authentication=false")
                 } else {
                     sessionStorage.setItem("playlists", JSON.stringify(jsonPlaylists));
+                    sessionStorage.setItem("yt-authentication", "true");
                     router.push("/transfer")
                 }
 

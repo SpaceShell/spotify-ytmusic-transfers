@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { PlaylistBlock } from './playlist-block';
-import { TrackBlock } from "./track-block";
-import { SpotifyHeader } from "./spotify-header";
+import { PlatformHeader } from "./header";
 import { YouTubeTransfer } from "./youtube-section";
 
 export function Transfer() {
@@ -64,13 +63,14 @@ export function Transfer() {
     <div className="mt-5 mx-15">
         <div className="flex justify-around gap-10 mb-10">
             <section>
-                <SpotifyHeader
+                <PlatformHeader
+                    all_playlist_text={"All Spotify Playlists:"}
                     view={view} 
                     setViewFunc={(view) => {setView(view)}}
                     musicLayout={musicLayout} 
                     setMusicLayoutFunc={(layout) => {setMusicLayout(layout)}} 
                     setSongsFunc={(songs) => {setSongs(songs)}}
-                ></SpotifyHeader>
+                ></PlatformHeader>
                 {
                 view == null ?
                     <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 gap-1"}`}>

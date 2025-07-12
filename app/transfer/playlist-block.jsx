@@ -114,13 +114,14 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 					</div>
 				:
 					<div 
-					className={`playlist${index} w-full py-2 px-4 flex justify-between items-center transition shadow-md rounded-sm outline-neutral-500 ${clicked ? `outline-3 playlist${index}Clicked` : ''}`}
+					className={`playlist${index} w-full h-min py-2 px-4 flex justify-between items-center transition shadow-md rounded-sm outline-neutral-500 ${clicked ? `outline-3 playlist${index}Clicked` : ''}`}
 					onMouseEnter={() => {setPlaylistButtonClass(`playlist${index}Button`)}}
 					onMouseLeave={() => {setPlaylistButtonClass("")}}
 					onClick={() => {setClicked(!clicked)}}
 					>
 						<div className='contents flex gap-5 items-center'>
 							<Image src={playlistImage} className='w-15 h-15' width={150} height={150} alt={'Image of album art in a playlist'} priority={true} unoptimized></Image>
+
 							<div className='w-full'>
 								<p className='font-bold whitespace-nowrap text-ellipsis overflow-hidden text-md'>{playlistName}</p>
 								<p className='text-sm'>{playlistOwner}</p>
@@ -134,14 +135,14 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 					</div>
 			: 
 				view == "grid" ?
-					<div className={`w-full py-6 px-6 border border-neutral-100 flex justify-center items-center transition shadow-md rounded-sm outline-neutral-400`}>
+					<div className={`w-full h-min py-6 px-6 border border-neutral-100 flex justify-center items-center transition shadow-md rounded-sm outline-neutral-400`}>
 						<CgSpinner className='w-5 h-5 animate-spin'/>
 						{/* Layout spacer for equal heights among playlist elements */}
 						<div className='w-0 h-30 invisible' aria-hidden="true"></div>
 					</div>
 				:
 					<div 
-					className={`w-full py-2 px-4 flex justify-center items-center transition shadow-md rounded-sm outline-neutral-500`}>
+					className={`w-full h-min py-2 px-4 flex justify-center items-center transition shadow-md rounded-sm outline-neutral-500`}>
 						<div className='w-0 h-15 invisible' aria-hidden="true"></div>
 						{/* Layout spacer for equal heights among playlist elements */}
 						<CgSpinner className='w-5 h-5 animate-spin'/>

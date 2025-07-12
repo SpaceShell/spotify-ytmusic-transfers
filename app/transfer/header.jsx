@@ -4,13 +4,13 @@ import { LuRows3 } from "react-icons/lu";
 import { MdOutlineGridView } from "react-icons/md";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
-export function SpotifyHeader({view, setViewFunc, musicLayout, setMusicLayoutFunc, setSongsFunc}) {
+export function PlatformHeader({all_playlist_text, view, setViewFunc, musicLayout, setMusicLayoutFunc, setSongsFunc}) {
     return (
         <>
             <div className="flex justify-between">
                 <div className={view == null ? "mb-7" : ""}>
                 <h2 className="font-bold text-3xl font-inter text-ellipsis overflow-hidden">
-                    {view == null ? "All Spotify Playlists:" : view}
+                    {view == null ? all_playlist_text : view}
                 </h2>
                 </div>
                 {
