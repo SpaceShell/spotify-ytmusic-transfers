@@ -101,7 +101,7 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 					onMouseLeave={() => {setPlaylistButtonClass("")}}
 					onClick={() => {setClicked(!clicked)}}
 					>
-						<Image src={playlistImage} className='w-30 h-30' width={150} height={150} alt={'Image of album art in a playlist'} priority={true} unoptimized></Image>
+						<Image src={playlistImage} className='w-30 h-30 object-cover' width={150} height={150} alt={'Image of album art in a playlist'} priority={true} unoptimized></Image>
 						<div className='w-30'>
 							<p className='font-bold whitespace-nowrap text-ellipsis overflow-hidden text-lg'>{playlistName}</p>
 							<p className='mt-1 text-sm'>{playlistOwner}</p>
@@ -120,7 +120,7 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 					onClick={() => {setClicked(!clicked)}}
 					>
 						<div className='contents flex gap-5 items-center'>
-							<Image src={playlistImage} className='w-15 h-15' width={150} height={150} alt={'Image of album art in a playlist'} priority={true} unoptimized></Image>
+							<Image src={playlistImage} className='w-15 h-15 object-cover' width={150} height={150} alt={'Image of album art in a playlist'} priority={true} unoptimized></Image>
 
 							<div className='w-full'>
 								<p className='font-bold whitespace-nowrap text-ellipsis overflow-hidden text-md'>{playlistName}</p>

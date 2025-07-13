@@ -3,23 +3,15 @@
 import Image from 'next/image'
 import { useState } from 'react';
 
-export function TrackBlock({track}) {
-    const albumImage = track.track.album.images ? track.track.album.images[0].url : "/Unavailable.png";
-    const album = track.track.album.name;
-    const trackName = track.track.name;
-    const artists = [];
-    const date_added = track.added_at.substring(0, 10);
+export function TrackBlock({albumImage, album, trackName, artists, date_added, duration}) {
+    let timeDuration = "---";
 
-    const minutes = (track.track.duration_ms / 60000 ).toFixed(0);
-    let seconds = ((track.track.duration_ms / 1000) % 60).toFixed(0);
-    if (seconds.length < 2) {
-        seconds = "0" + seconds;
-    };
-    const duration = minutes + ":" + seconds;
-
-    track.track.artists.forEach((artist) => {
-        artists.push(artist.name);
-    });
+    if (duration != "---") {
+        if (duration.seconds.length < 2) {
+            duration.seconds = "0" + duration.seconds;
+        };
+        timeDuration = duration.minutes + ":" + duration.seconds;
+    }
 
     const [clicked, setClicked] = useState(false);
     
@@ -30,7 +22,7 @@ export function TrackBlock({track}) {
             onClick={() => {setClicked(!clicked)}}
             >
                 <div className='w-full flex gap-5 items-center'>
-                    <Image src={albumImage} className='w-15 h-15' width={150} height={150} alt={"Album cover image"} priority={true} unoptimized></Image>
+                    <Image src={albumImage} className='w-15 h-15 object-cover' width={150} height={150} alt={"Album cover image"} priority={true} unoptimized></Image>
                     <div className='w-1/3 basis-1/3'>
                         <p className='font-bold whitespace-nowrap text-ellipsis overflow-hidden text-md'>{trackName}</p>
                         <p className='whitespace-nowrap text-ellipsis overflow-hidden text-sm'>{artists.join(", ")}</p>
@@ -43,7 +35,7 @@ export function TrackBlock({track}) {
                         {date_added}
                     </p>
                     <p className='text-sm whitespace-nowrap text-right grow'>
-                        {duration}
+                        {timeDuration}
                     </p>
                 </div>
             </div>

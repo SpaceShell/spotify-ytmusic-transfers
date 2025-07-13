@@ -8,6 +8,8 @@ import { PlaylistBlock } from './playlist-block';
 import { PlatformHeader } from "./header";
 import { YouTubeTransfer } from "./youtube-section";
 
+import { TrackBlock } from "./track-block";
+
 export function Transfer() {
   const { data: sessionSpotify } = useSession({
     required: true,
@@ -52,7 +54,6 @@ export function Transfer() {
                 sessionSpotify.accessToken, playlists[playlistIndex].tracks.href
             ).then((data) => {
                 setSongs(data.items);
-                console.log(data);
             })
         }
         setView(playlistName);
@@ -73,7 +74,7 @@ export function Transfer() {
                 ></PlatformHeader>
                 {
                 view == null ?
-                    <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 gap-1"}`}>
+                    <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 auto-rows-min gap-1"}`}>
                         {sessionSpotify && 
                         <PlaylistBlock 
                             playlistImage={"/LikeImage.png"}
@@ -100,11 +101,25 @@ export function Transfer() {
                         ))}
                     </div>
                 :
-                    <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 grid-cols-1 gap-1`}>
+                    <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 grid-cols-1 auto-rows-max gap-1`}>
                         {currentSongs.map((track, index) => (
                         <TrackBlock
                             key={index}
-                            track={track}
+                            albumImage={track.track.album.images ? track.track.album.images[0].url : "/Unavailable.png"}
+                            album={track.track.album.name}
+                            trackName={track.track.name}
+                            artists={
+                                track.track.artists.map((artist) => {
+                                    return artist.name
+                                })
+                            }
+                            date_added={track.added_at.substring(0, 10)}
+                            duration={
+                                {
+                                    minutes: (track.track.duration_ms / 60000 ).toFixed(0),
+                                    seconds: ((track.track.duration_ms / 1000) % 60).toFixed(0)
+                                }
+                            }
                         ></TrackBlock>
                         ))}
                     </div>

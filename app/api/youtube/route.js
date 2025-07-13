@@ -58,6 +58,8 @@ export async function POST(req) {
 
     if (reqBody.action === "signIn") {
         return await YouTubeSignIn(reqBody);
+    } else if (reqBody.action == "retrieveTracks") {
+        return await retrieveTracks(reqBody)
     }
     return new Response("Invalid action given", { status: 400 });
 }
@@ -100,4 +102,17 @@ async function YouTubeSignIn(reqBody) {
     });
 
     return Response.json(playlistData);
+}
+
+async function retrieveTracks(reqBody) {
+    const cookieStore = await cookies();
+
+    const tracksResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${reqBody.playlistId}`, {
+        headers: {
+            Authorization: `Bearer ${cookieStore.get("access_token").value}`
+        }
+    });
+    const tracksData = await tracksResponse.json();
+
+    return Response.json(tracksData);
 }

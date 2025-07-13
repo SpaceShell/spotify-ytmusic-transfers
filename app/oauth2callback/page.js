@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function YouTubeSigningInPage() {
-    const router = useRouter()
+    const router = useRouter();
 
     useEffect(() => {
         const getYouTubeData = async () => {
@@ -17,22 +17,22 @@ export default function YouTubeSigningInPage() {
                     method: "POST",
                     body: JSON.stringify({ code: code, action: "signIn" }),
                 }).then(async (response) => {
-                    const jsonPlaylists = await response.json()
+                    const jsonPlaylists = await response.json();
 
                     if ("error" in jsonPlaylists) {
-                        router.push("/?authentication=false")
+                        router.push("/?authentication=false");
                     } else {
                         sessionStorage.setItem("playlists", JSON.stringify(jsonPlaylists));
                         sessionStorage.setItem("yt-authentication", "true");
-                        router.push("/transfer")
+                        router.push("/transfer");
                     }
                 });
             } catch {
-                router.push("/?authentication=false")
+                router.push("/?authentication=false");
             }
         }
 
-        getYouTubeData()
+        getYouTubeData();
     }, [])
 
 
