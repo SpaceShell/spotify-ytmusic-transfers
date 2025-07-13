@@ -10,19 +10,23 @@ export default function YouTubeSigningInPage() {
         const getYouTubeData = async () => {
             try {
                 const url = new URL(window.location.href);
-                const params = new URLSearchParams(url.hash);
+                const params = new URLSearchParams(url.href);
+                const code = params.get("code");
 
-                const response = await fetch(`https://www.googleapis.com/youtube/v3/playlists?access_token=${params.get("access_token")}&part=snippet,contentDetails&mine=true`);
-                const jsonPlaylists = await response.json()
+                await fetch('/api/youtube', {
+                    method: "POST",
+                    body: JSON.stringify({ code: code, action: "signIn" }),
+                }).then(async (response) => {
+                    const jsonPlaylists = await response.json()
 
-                if ("error" in jsonPlaylists) {
-                    router.push("/?authentication=false")
-                } else {
-                    sessionStorage.setItem("playlists", JSON.stringify(jsonPlaylists));
-                    sessionStorage.setItem("yt-authentication", "true");
-                    router.push("/transfer")
-                }
-
+                    if ("error" in jsonPlaylists) {
+                        router.push("/?authentication=false")
+                    } else {
+                        sessionStorage.setItem("playlists", JSON.stringify(jsonPlaylists));
+                        sessionStorage.setItem("yt-authentication", "true");
+                        router.push("/transfer")
+                    }
+                });
             } catch {
                 router.push("/?authentication=false")
             }
@@ -33,7 +37,7 @@ export default function YouTubeSigningInPage() {
 
 
     return (
-        <div>
+        <div className="w-full flex items-center">
             <p>Signing in to YouTube Music...</p>
         </div>
     )

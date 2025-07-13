@@ -7,7 +7,7 @@ export function YTMusicLoginButton() {
     const router = useRouter();
 
     const YouTubeSignIn = async () => {
-        await fetch('/api/youtube?retrieve=playlists', {
+        await fetch('/api/youtube', {
             method: "GET",
         }).then(async (response) => {
             const json = await response.json()
