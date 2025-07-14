@@ -37,8 +37,13 @@ export default function YouTubeSigningInPage() {
 
 
     return (
-        <div className="w-full h-fill flex items-center text-center">
-            <p>Signing in to YouTube Music...</p>
+        <div className="w-full h-screen flex flex-col justify-center items-center text-center relative pb-30">
+            <p className="w-full text-center mb-15 text-xl font-bold">Signing in to YouTube Music...</p>
+            <div className="flex gap-3">
+                <div className="loadingDots"></div>
+                <div className="loadingDots"></div>
+                <div className="loadingDots"></div>
+            </div>
         </div>
     )
 }
