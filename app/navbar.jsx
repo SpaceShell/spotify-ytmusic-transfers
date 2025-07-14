@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react"
 import { MdOutlineDarkMode } from "react-icons/md";
 import { CiLogout } from "react-icons/ci";
@@ -14,6 +15,7 @@ export function Navbar() {
     const [sessionYouTube, setSessionYouTube] = useState(false)
     const signOutSpotify = useRef(undefined)
     const signOutYouTube = useRef(undefined)
+    const router = useRouter()
 
     useEffect(() => {
         setSessionYouTube(sessionStorage.getItem("yt-authentication"))
@@ -54,6 +56,23 @@ export function Navbar() {
             document.removeEventListener('mousedown', hideYouTubeSignOut);
         };
     }, [showYouTubeSignOut])
+
+    const signOutOfYouTube = async () => {
+        try {
+            await fetch('/api/youtube', {
+                method: "POST",
+                body: JSON.stringify({ action: "signOut" }),
+            }).then(async (res) => {
+                sessionStorage.removeItem("yt-authentication");
+                setSessionYouTube(false)
+                router.push("/")
+            });
+        } catch {
+            sessionStorage.removeItem("yt-authentication");
+            setSessionYouTube(false)
+            router.push("/")
+        }
+    }
 
     return (
         <nav className="flex justify-between items-center py-5 px-10">
@@ -104,7 +123,7 @@ export function Navbar() {
                             showYouTubeSignOut &&
                             <button 
                                 className="w-35 py-3 pl-5 pr-6 top-12 right-0 absolute rounded-xl shadow-md border border-neutral-100 flex justify-between items-center bg-white hover:bg-neutral-100 cursor-pointer"
-                                onClick={() => {signOut({ callbackUrl: '/' })}}
+                                onClick={signOutOfYouTube}
                                 ref={signOutYouTube}
                             >
                                 <CiLogout className="w-5 h-5" />

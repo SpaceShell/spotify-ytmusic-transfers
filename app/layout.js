@@ -12,7 +12,7 @@ const arimo = Arimo({
 });
 
 export const metadata = {
-  title: "MusiTransfer",
+  title: "MusiMove",
   description: "A web app to help transfer songs and playlists between Spotify and YouTube Music"
 };
 

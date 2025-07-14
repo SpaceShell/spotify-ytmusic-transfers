@@ -37,7 +37,7 @@ export default function YouTubeSigningInPage() {
 
 
     return (
-        <div className="w-full flex items-center">
+        <div className="w-full h-fill flex items-center text-center">
             <p>Signing in to YouTube Music...</p>
         </div>
     )

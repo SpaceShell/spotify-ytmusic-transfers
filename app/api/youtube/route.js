@@ -57,15 +57,17 @@ export async function POST(req) {
     let reqBody = await req.json();
 
     if (reqBody.action === "signIn") {
-        return await YouTubeSignIn(reqBody);
+        return await youTubeSignIn(reqBody);
     } else if (reqBody.action == "retrieveTracks") {
         return await retrieveTracks(reqBody)
+    } else if (reqBody.action == "signOut") {
+        return await youtubeSignOut()
     }
     return new Response("Invalid action given", { status: 400 });
 }
 
 
-async function YouTubeSignIn(reqBody) {
+async function youTubeSignIn(reqBody) {
     const cookieStore = await cookies()
 
     const body = new URLSearchParams({
@@ -115,4 +117,19 @@ async function retrieveTracks(reqBody) {
     const tracksData = await tracksResponse.json();
 
     return Response.json(tracksData);
+}
+
+async function youtubeSignOut() {
+    const cookieStore = await cookies();
+
+    const response = await fetch(`https://oauth2.googleapis.com/revoke`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `token=${encodeURIComponent(cookieStore.get("access_token").value)}`
+    })
+
+    cookieStore.delete("access_token")
+    return Response.json(response);
 }
