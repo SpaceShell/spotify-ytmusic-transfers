@@ -61,7 +61,7 @@ export function SpotifyTransfer() {
     return (
         <section>
             <PlatformHeader
-                all_playlist_text={"All Spotify Playlists:"}
+                allPlaylistText={"All Spotify Playlists:"}
                 view={view} 
                 setViewFunc={(view) => {setView(view)}}
                 musicLayout={musicLayout} 
@@ -97,7 +97,16 @@ export function SpotifyTransfer() {
                     ))}
                 </div>
             :
-                <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 grid-cols-1 auto-rows-max gap-1`}>
+                <div className={`w-175 h-130 grid overflow-y-auto pb-2 px-4 my-3 grid-cols-1 auto-rows-max gap-1 relative`}>
+                    <div className="w-full h-min py-3 px-4 my-1 grid grid-cols-1 gap-1 font-bold sticky top-0 backdrop-blur-sm bg-neutral-600/5">
+                            <div className="flex gap-5">
+                                <p className="w-1/3 basis-1/3 text-sm">Track:</p>
+                                <div className="w-15"></div>
+                                <p className="basis-1/4 text-sm">Album:</p>
+                                <p className="text-sm grow">Added:</p>
+                                <p className="text-sm text-right">Length:</p>
+                            </div>
+                    </div>
                     {currentSongs.map((track, index) => (
                     <TrackBlock
                         key={index}
