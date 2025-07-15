@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { SessionProvider } from "next-auth/react"
 import { Navbar } from "./navbar";
 import Error from "./error-message";
@@ -10,7 +9,6 @@ import { SpotifyLoginButton } from "./spotify-login-button";
 import { YTMusicLoginButton } from "./ytmusic-login-button";
 
 export default function Home() {
-	const router = useRouter();
 	const [query, setQuery] = useState(new Set([]))
 	  
 	useEffect(() => {

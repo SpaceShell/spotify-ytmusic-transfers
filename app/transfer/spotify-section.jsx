@@ -42,6 +42,8 @@ export function SpotifyTransfer() {
         authOptions.callbacks.getLikedPlaylist(sessionSpotify.accessToken).then((data) => {
             setLikedPlaylist(data);
         });
+    } else {
+        fetch("/api/auth/session");
     }
     }, [sessionSpotify]);
 
@@ -110,6 +112,7 @@ export function SpotifyTransfer() {
                     {currentSongs.map((track, index) => (
                     <TrackBlock
                         key={index}
+                        index={index}
                         albumImage={track.track.album.images ? track.track.album.images[0].url : "/Unavailable.png"}
                         album={track.track.album.name}
                         trackName={track.track.name}

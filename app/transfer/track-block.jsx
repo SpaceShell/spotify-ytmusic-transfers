@@ -1,9 +1,10 @@
 "use client"
 
-import Image from 'next/image'
-import { useState } from 'react';
+import Image from 'next/image';
+import { useState, useEffect, useContext } from 'react';
+import { ItemsTransferContext } from "./transfer-context";
 
-export function TrackBlock({albumImage, album, trackName, artists, date_added, duration}) {
+export function TrackBlock({index, albumImage, album, trackName, artists, date_added, duration}) {
     let timeDuration = "---";
 
     if (duration != "---") {
@@ -14,6 +15,19 @@ export function TrackBlock({albumImage, album, trackName, artists, date_added, d
     }
 
     const [clicked, setClicked] = useState(false);
+    const {transferContext, setTransferContext} = useContext(ItemsTransferContext);
+
+    useEffect(() => {
+            if (transferContext.transfer != "tracks") {
+                transferContext.items = [];
+            }
+            
+            if (clicked == true) {
+                setTransferContext({transfer: "tracks", items: [...transferContext.items, index]});
+            } else if (clicked == false && transferContext.items != []) {
+                setTransferContext({transfer: "tracks", items: transferContext.items.filter((elem) => elem != index)});
+            }
+    }, [clicked])
     
     return (
         <>

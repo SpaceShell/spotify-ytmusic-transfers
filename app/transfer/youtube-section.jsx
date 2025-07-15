@@ -72,6 +72,7 @@ export function YouTubeTransfer() {
                     {currentSongs.map((track, index) => (
                     <TrackBlock
                         key={index}
+                        index={index}
                         albumImage={track.snippet.thumbnails.standard.url}
                         album={track.snippet.description.split("\n")[4]}
                         trackName={track.snippet.title}

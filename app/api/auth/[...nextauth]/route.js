@@ -25,7 +25,7 @@ export const authOptions = {
     async jwt({ token, account }) {
       if (account) {
         token.accessToken = account.access_token;
-        token.expire = Date.now() + account.expires_at * 1000;
+        token.expire = account.expires_at * 1000;
         token.refreshToken = account.refresh_token;
         return token;
       }
@@ -104,7 +104,7 @@ async function refreshAccessToken(token) {
     return {
       ...token,
       accessToken: response.access_token,
-      expire: Date.now() + response.expires_in * 1000,
+      expire: response.expires_at * 1000,
       refreshToken: response.refresh_token ?? token.refreshToken,
     }
   } catch (error) {

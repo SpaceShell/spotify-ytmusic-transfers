@@ -1,15 +1,17 @@
 "use client"
 
 import Image from 'next/image';
-import { getRelativeLuminance } from './color-formula';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { CgSpinner } from "react-icons/cg";
+import { getRelativeLuminance } from './color-formula';
+import { ItemsTransferContext } from "./transfer-context";
 
 export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playlistTrackCount, index, view, viewTracksFunc, loadData}) {
 	const [mainColorBackground, setMainColorBackground] = useState("rgb(65, 65, 65)");
 	const [playlistButtonClass, setPlaylistButtonClass] = useState("");
 	const [clicked, setClicked] = useState(false);
 	const [loaded, setLoaded] = useState(false);
+	const {transferContext, setTransferContext} = useContext(ItemsTransferContext)
 
 	useEffect(() => {
 		const getImageColor = async () => {
@@ -66,6 +68,18 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 			}
 		}
 	}, [])
+
+	useEffect(() => {
+		if (transferContext.transfer != "playlists") {
+			transferContext.items = [];
+		}
+		
+		if (clicked == true) {
+			setTransferContext({transfer: "playlists", items: [...transferContext.items, index]});
+		} else if (clicked == false && transferContext.items != []) {
+			setTransferContext({transfer: "playlists", items: transferContext.items.filter((elem) => elem != index)});
+		}
+	}, [clicked])
 
 	return (
 		<>
