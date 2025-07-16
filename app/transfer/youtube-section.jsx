@@ -10,7 +10,10 @@ export function YouTubeTransfer() {
     const [musicLayout, setMusicLayout] = useState("grid");
     const [view, setView] = useState(null);
     const [currentSongs, setSongs] = useState([]);
+
     let playlistLoadData = useRef({});
+    let playlistTrackData = useRef({});
+    let scrollSection = useRef()
 
     useEffect(() => {
         const playlistInfo = JSON.parse(sessionStorage.getItem("playlists"));
@@ -21,13 +24,20 @@ export function YouTubeTransfer() {
     }, [])
 
     const viewTracks = async (playlistIndex, playlistName) => {
-        await fetch('/api/youtube', {
-            method: "POST",
-            body: JSON.stringify({ playlistId: playlists[playlistIndex].id, action: "retrieveTracks" }),
-        }).then(async (response) => {
-            const jsonTracks = await response.json();
-            setSongs(jsonTracks.items);
-        });
+        scrollSection.current.scrollTo(0, 0);
+        
+        if (playlists[playlistIndex].id in playlistTrackData.current) {
+            setSongs(playlistTrackData.current[playlists[playlistIndex].id]);
+        } else {
+            await fetch('/api/youtube', {
+                method: "POST",
+                body: JSON.stringify({ playlistId: playlists[playlistIndex].id, action: "retrieveTracks" }),
+            }).then(async (response) => {
+                const jsonTracks = await response.json();
+                playlistTrackData.current[playlists[playlistIndex].id] = jsonTracks.items;
+                setSongs(jsonTracks.items);
+            });
+        }
         setView(playlistName);
     }
 
@@ -43,7 +53,7 @@ export function YouTubeTransfer() {
             ></PlatformHeader>
             {
             view == null ?
-                <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 auto-rows-min gap-1"}`}>
+                <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 auto-rows-min gap-1"}`} ref={scrollSection}>
                     {playlists.map((playlist, index) => (
                     <PlaylistBlock
                         key={index}
@@ -60,7 +70,7 @@ export function YouTubeTransfer() {
                 </div>
             :
                 <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 grid-cols-1 auto-rows-max gap-1 relative`}>
-                     <div className="w-full h-min py-3 px-4 my-1 grid grid-cols-1 gap-1 font-bold sticky top-0 backdrop-blur-sm bg-neutral-600/5">
+                     <div className="w-full h-min py-3 px-4 my-1 grid grid-cols-1 gap-1 font-bold sticky top-0 backdrop-blur-lg bg-neutral-600/5">
                             <div className="flex gap-5">
                                 <p className="w-1/3 basis-1/3 text-sm">Track:</p>
                                 <div className="w-15"></div>

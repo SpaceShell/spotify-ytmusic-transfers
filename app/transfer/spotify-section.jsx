@@ -8,7 +8,6 @@ import { PlatformHeader } from "./header";
 import { PlaylistBlock } from "./playlist-block";
 import { TrackBlock } from "./track-block";
 
-
 export function SpotifyTransfer() {
     const { data: sessionSpotify } = useSession({
         required: true,
@@ -26,6 +25,8 @@ export function SpotifyTransfer() {
     const router = useRouter();
 
     let playlistLoadData = useRef({});
+    let playlistTrackData = useRef({});
+    let scrollSection = useRef()
 
     useEffect(() => {
     if (sessionSpotify) {
@@ -48,14 +49,21 @@ export function SpotifyTransfer() {
     }, [sessionSpotify]);
 
     const viewTracks = (playlistIndex, playlistName) => {
+        scrollSection.current.scrollTo(0, 0);
+
         if (playlistIndex == "Like") {
             setSongs(likedPlaylist.items);
         } else {
-            authOptions.callbacks.getPlaylistTracks(
-                sessionSpotify.accessToken, playlists[playlistIndex].tracks.href
-            ).then((data) => {
-                setSongs(data.items);
-            })
+            if (playlists[playlistIndex].id in playlistTrackData.current) {
+                setSongs(playlistTrackData.current[playlists[playlistIndex].id]);
+            } else {
+                authOptions.callbacks.getPlaylistTracks(
+                    sessionSpotify.accessToken, playlists[playlistIndex].tracks.href
+                ).then((data) => {
+                    playlistTrackData.current[playlists[playlistIndex].id] = data.items;
+                    setSongs(data.items);
+                })
+            }
         }
         setView(playlistName);
     }
@@ -72,7 +80,7 @@ export function SpotifyTransfer() {
             ></PlatformHeader>
             {
             view == null ?
-                <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 auto-rows-min gap-1"}`}>
+                <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 auto-rows-min gap-1"}`} ref={scrollSection}>
                     {sessionSpotify && 
                     <PlaylistBlock 
                         playlistImage={"/LikeImage.png"}
@@ -100,7 +108,7 @@ export function SpotifyTransfer() {
                 </div>
             :
                 <div className={`w-175 h-130 grid overflow-y-auto pb-2 px-4 my-3 grid-cols-1 auto-rows-max gap-1 relative`}>
-                    <div className="w-full h-min py-3 px-4 my-1 grid grid-cols-1 gap-1 font-bold sticky top-0 backdrop-blur-sm bg-neutral-600/5">
+                    <div className="w-full h-min py-3 px-4 my-1 grid grid-cols-1 gap-1 font-bold sticky top-0 backdrop-blur-lg bg-neutral-600/5">
                             <div className="flex gap-5">
                                 <p className="w-1/3 basis-1/3 text-sm">Track:</p>
                                 <div className="w-15"></div>

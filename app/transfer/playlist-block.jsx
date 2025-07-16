@@ -122,7 +122,10 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 							<p className='text-sm'>{playlistTrackCount} {playlistTrackCount == 1 ? "song" : "songs"}</p>
 							<button 
 							className={`${playlistButtonClass} mt-3 font-semibold border-3 rounded-lg py-1 px-3 text-sm cursor-pointer bg-transparent border-stone-800 text-stone-800 transition-colors`}
-							onClick={() => {viewTracksFunc(index, playlistName)}}
+							onClick={(e) => {
+								e.stopPropagation()
+								viewTracksFunc(index, playlistName)
+							}}
 							>View Songs</button>
 						</div>
 					</div>
@@ -144,7 +147,10 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 						</div>
 						<button 
 						className={`${playlistButtonClass} font-semibold border-3 rounded-lg py-2 px-3 text-sm cursor-pointer bg-transparent border-stone-800 text-stone-800 transition-colors`}
-						onClick={() => {viewTracksFunc(index, playlistName)}}
+						onClick={(e) => {
+							e.stopPropagation()
+							viewTracksFunc(index, playlistName)
+						}}
 						>View Songs</button>
 					</div>
 			: 
