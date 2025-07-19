@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { YouTubeTransfer } from "./youtube-section";
@@ -8,6 +8,7 @@ import { SpotifyTransfer } from "./spotify-section";
 import { ItemsTransferContext } from "./transfer-contexts";
 import { ToFromContext } from './transfer-contexts';
 import { PiArrowFatLinesRightFill } from "react-icons/pi";
+import { EmptyTransfer } from './empty-section';
 
 export function Transfer() {
     const router = useRouter()
@@ -22,6 +23,10 @@ export function Transfer() {
     const [transferContext, setTransferContext] = useState({transfer: undefined, items: []});
     const {toFromContext, setToFromContext} = useContext(ToFromContext);
 
+    useEffect(() => {
+        console.log(toFromContext)
+    }, [toFromContext])
+
     const transferToOtherPlatform = () => {
         console.log("Transfer Context", transferContext);
     }
@@ -33,15 +38,23 @@ export function Transfer() {
                     {
                         toFromContext.from == "Spotify" ?
                             <SpotifyTransfer></SpotifyTransfer>
-                        :
-                            <YouTubeTransfer></YouTubeTransfer>
+                        : (
+                            toFromContext.from == "YouTube" ?
+                                <YouTubeTransfer></YouTubeTransfer>
+                            :
+                                <EmptyTransfer></EmptyTransfer>
+                        )
                     }
                     <PiArrowFatLinesRightFill className='w-13 h-13 self-center'/>
                     {
                         toFromContext.to == "Spotify" ?
                             <SpotifyTransfer></SpotifyTransfer>
-                        :
-                            <YouTubeTransfer></YouTubeTransfer>
+                        : (
+                            toFromContext.to == "YouTube" ?
+                                <YouTubeTransfer></YouTubeTransfer>
+                            :
+                                <EmptyTransfer></EmptyTransfer>
+                        )
                     }
                 </ItemsTransferContext>
             </div>

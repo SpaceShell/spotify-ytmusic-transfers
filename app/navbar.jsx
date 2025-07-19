@@ -37,6 +37,15 @@ export function Navbar() {
         )
     }, [])
 
+    useEffect(() => {
+        setToFromContext(
+            {
+                from: sessionStorage.getItem("transfer-from"),
+                to: sessionStorage.getItem("transfer-to")
+            }
+        )
+    }, [sessionYouTube, sessionSpotify])
+
     const changeTransferOrder = () => {
         const toStreamingPlatform = sessionStorage.getItem("transfer-to"); 
         const fromStreamingPlatform = sessionStorage.getItem("transfer-from"); 

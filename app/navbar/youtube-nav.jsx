@@ -8,6 +8,7 @@ export function YoutubeOptionsNavbar({setSessionYouTube, transferDirection}) {
     const [showYouTubeSignOut, setShowYouTubeSignOut] = useState(false)
     const signOutYouTube = useRef(undefined)
     const router = useRouter()
+    const {toFromContext, setToFromContext} = useContext(ToFromContext);
 
     const signOutOfYouTube = async () => {
         try {
@@ -20,7 +21,7 @@ export function YoutubeOptionsNavbar({setSessionYouTube, transferDirection}) {
             });
         } catch {
             setSessionYouTube(false)
-            sessionStorage.setItem("transfer-" + transferDirection, undefined);
+            sessionStorage.removeItem("transfer-" + transferDirection);
             router.push("/")
         }
     }
