@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useEffect, useContext } from 'react';
-import { ItemsTransferContext } from "./transfer-context";
+import { ItemsTransferContext } from "./transfer-contexts";
 
 export function TrackBlock({index, albumImage, album, trackName, artists, date_added, duration}) {
     let timeDuration = "---";

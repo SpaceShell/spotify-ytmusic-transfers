@@ -9,14 +9,7 @@ import { PlaylistBlock } from "./playlist-block";
 import { TrackBlock } from "./track-block";
 
 export function SpotifyTransfer() {
-    const { data: sessionSpotify } = useSession({
-        required: true,
-        onUnauthenticated() {
-            if (sessionStorage.getItem("playlists") == undefined) {
-                router.push('/?authentication=false');
-            }
-        }
-    });
+    const { data: sessionSpotify } = useSession();
     const [playlists, setPlaylists] = useState([]);
     const [likedPlaylist, setLikedPlaylist] = useState([]);
     const [musicLayout, setMusicLayout] = useState("grid");
@@ -80,7 +73,7 @@ export function SpotifyTransfer() {
             ></PlatformHeader>
             {
             view == null ?
-                <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 auto-rows-min gap-1"}`} ref={scrollSection}>
+                <div className={`w-172 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 auto-rows-min gap-1"}`} ref={scrollSection}>
                     {sessionSpotify && 
                     <PlaylistBlock 
                         playlistImage={"/LikeImage.png"}
@@ -107,7 +100,7 @@ export function SpotifyTransfer() {
                     ))}
                 </div>
             :
-                <div className={`w-175 h-130 grid overflow-y-auto pb-2 px-4 my-3 grid-cols-1 auto-rows-max gap-1 relative`}>
+                <div className={`w-172 h-130 grid overflow-y-auto pb-2 px-4 my-3 grid-cols-1 auto-rows-max gap-1 relative`}>
                     <div className="w-full h-min py-3 px-4 my-1 grid grid-cols-1 gap-1 font-bold sticky top-0 backdrop-blur-lg bg-neutral-600/5">
                             <div className="flex gap-5">
                                 <p className="w-1/3 basis-1/3 text-sm">Track:</p>

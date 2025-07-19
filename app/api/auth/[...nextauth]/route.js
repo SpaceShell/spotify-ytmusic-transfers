@@ -21,6 +21,9 @@ export const authOptions = {
       }
     }),
   ],
+  pages: {
+    error: '/?authentication=false',
+  },
   callbacks: {
     async jwt({ token, account }) {
       if (account) {

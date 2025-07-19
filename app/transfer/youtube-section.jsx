@@ -16,16 +16,32 @@ export function YouTubeTransfer() {
     let scrollSection = useRef()
 
     useEffect(() => {
-        const playlistInfo = JSON.parse(sessionStorage.getItem("playlists"));
+        const checkSession = async () => {
+            await fetch('/api/youtube', {
+                method: "POST",
+                body: JSON.stringify({ action: "checkSession" }),
+            }).then(async (response) => {
+                const session = await response.json()
 
-        if (playlistInfo) {
-            setPlaylists(playlistInfo.items);
+                if (session.session == true) {
+                    const playlistInfo = JSON.parse(sessionStorage.getItem("playlists"));
+
+                    if (playlistInfo) {
+                        setPlaylists(playlistInfo.items);
+                    }
+                } else {
+                    sessionStorage.removeItem("playlists");
+                    setPlaylists([]);
+                }
+            });
         }
+
+        checkSession()
     }, [])
 
     const viewTracks = async (playlistIndex, playlistName) => {
         scrollSection.current.scrollTo(0, 0);
-        
+
         if (playlists[playlistIndex].id in playlistTrackData.current) {
             setSongs(playlistTrackData.current[playlists[playlistIndex].id]);
         } else {
@@ -53,7 +69,7 @@ export function YouTubeTransfer() {
             ></PlatformHeader>
             {
             view == null ?
-                <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 auto-rows-min gap-1"}`} ref={scrollSection}>
+                <div className={`w-172 h-130 grid overflow-y-auto px-4 py-3 ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 auto-rows-min gap-1"}`} ref={scrollSection}>
                     {playlists.map((playlist, index) => (
                     <PlaylistBlock
                         key={index}
@@ -69,7 +85,7 @@ export function YouTubeTransfer() {
                     ))}
                 </div>
             :
-                <div className={`w-175 h-130 grid overflow-y-auto px-4 py-3 grid-cols-1 auto-rows-max gap-1 relative`}>
+                <div className={`w-172 h-130 grid overflow-y-auto px-4 py-3 grid-cols-1 auto-rows-max gap-1 relative`}>
                      <div className="w-full h-min py-3 px-4 my-1 grid grid-cols-1 gap-1 font-bold sticky top-0 backdrop-blur-lg bg-neutral-600/5">
                             <div className="flex gap-5">
                                 <p className="w-1/3 basis-1/3 text-sm">Track:</p>

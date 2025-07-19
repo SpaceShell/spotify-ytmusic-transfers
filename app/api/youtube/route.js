@@ -62,6 +62,13 @@ export async function POST(req) {
         return await retrieveTracks(reqBody)
     } else if (reqBody.action == "signOut") {
         return await youtubeSignOut()
+    } else if (reqBody.action == "checkSession") {
+        const cookieStore = await cookies()
+
+        if (cookieStore.get("access_token") == undefined) {
+            return Response.json({session: false})
+        }
+        return Response.json({session: true})
     }
     return new Response("Invalid action given", { status: 400 });
 }

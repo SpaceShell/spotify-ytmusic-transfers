@@ -23,7 +23,6 @@ export default function YouTubeSigningInPage() {
                         router.push("/?authentication=false");
                     } else {
                         sessionStorage.setItem("playlists", JSON.stringify(jsonPlaylists));
-                        sessionStorage.setItem("yt-authentication", "true");
                         router.push("/transfer");
                     }
                 });

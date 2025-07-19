@@ -2,75 +2,57 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSession, signOut } from "next-auth/react"
+import { useSession } from "next-auth/react"
+import { useEffect, useState, useContext } from "react";
 import { MdOutlineDarkMode } from "react-icons/md";
-import { CiLogout } from "react-icons/ci";
-import { useEffect, useRef, useState } from "react";
+import { FaArrowRightArrowLeft } from "react-icons/fa6";
+import { SignInNavbar } from "./navbar/sign-in-nav";
+import { YoutubeOptionsNavbar } from "./navbar/youtube-nav";
+import { SpotifyOptionsNavbar } from "./navbar/spotify-nav";
+import { ToFromContext } from "./transfer/transfer-contexts";
 
 export function Navbar() {
     const { data: sessionSpotify } = useSession()
-    const [showSpotifySignOut, setShowSpotifySignOut] = useState(false)
-    const [showYouTubeSignOut, setShowYouTubeSignOut] = useState(false)
     const [sessionYouTube, setSessionYouTube] = useState(false)
-    const signOutSpotify = useRef(undefined)
-    const signOutYouTube = useRef(undefined)
-    const router = useRouter()
+    const {toFromContext, setToFromContext} = useContext(ToFromContext)
 
     useEffect(() => {
-        setSessionYouTube(sessionStorage.getItem("yt-authentication"))
-    }, [])
-
-    useEffect(() => {
-        const hideSpotifySignOut = (e) => {
-            if (
-                signOutSpotify.current &&
-                showSpotifySignOut == true &&
-                e.target != signOutSpotify.current &&
-                e.target != document.getElementById("spotifyLogo")
-            ) {
-                setShowSpotifySignOut(false)
-            }
-        }
-
-        document.addEventListener("mousedown", hideSpotifySignOut)
-        return () => {
-            document.removeEventListener('mousedown', hideSpotifySignOut);
-        };
-    }, [showSpotifySignOut])
-
-    useEffect(() => {
-        const hideYouTubeSignOut = (e) => {
-            if (
-                signOutYouTube.current &&
-                showYouTubeSignOut == true &&
-                e.target != signOutYouTube.current &&
-                e.target != document.getElementById("spotifyLogo")
-            ) {
-                setShowYouTubeSignOut(false)
-            }
-        }
-
-        document.addEventListener("mousedown", hideYouTubeSignOut)
-        return () => {
-            document.removeEventListener('mousedown', hideYouTubeSignOut);
-        };
-    }, [showYouTubeSignOut])
-
-    const signOutOfYouTube = async () => {
-        try {
+        const checkSession = async () => {
             await fetch('/api/youtube', {
                 method: "POST",
-                body: JSON.stringify({ action: "signOut" }),
-            }).then(async (res) => {
-                sessionStorage.removeItem("yt-authentication");
-                setSessionYouTube(false)
-                router.push("/")
+                body: JSON.stringify({ action: "checkSession" }),
+            }).then(async (response) => {
+                const session = await response.json()
+
+                setSessionYouTube(session.session)
             });
-        } catch {
-            sessionStorage.removeItem("yt-authentication");
-            setSessionYouTube(false)
-            router.push("/")
+        }
+
+        checkSession()
+        if (!(toFromContext == undefined)) {
+            setToFromContext(
+                {
+                    from: sessionStorage.getItem("transfer-from"),
+                    to: sessionStorage.getItem("transfer-to")
+                }
+            )
+        }
+    }, [])
+
+    const changeTransferOrder = () => {
+        const toStreamingPlatform = sessionStorage.getItem("transfer-to"); 
+        const fromStreamingPlatform = sessionStorage.getItem("transfer-from"); 
+
+        sessionStorage.setItem("transfer-from", toStreamingPlatform),
+        sessionStorage.setItem("transfer-to", fromStreamingPlatform)
+
+        if (!(toFromContext == undefined)) {
+            setToFromContext(
+                {
+                    from: sessionStorage.getItem("transfer-from"),
+                    to: sessionStorage.getItem("transfer-to")
+                }
+            )
         }
     }
 
@@ -83,55 +65,37 @@ export function Navbar() {
             </div>
             <div className="flex gap-5 items-center">
                 {
-                    sessionSpotify &&
-                    <div className="relative">
-                        <Image
-                            id="spotifyLogo"
-                            src="/SpotifyLogo.svg"
-                            className='w-10 h-10 cursor-pointer'
-                            width={150} height={150}
-                            alt="Spotify logo"
-                            priority={true}
-                            onClick={() => {setShowSpotifySignOut(!showSpotifySignOut)}}
-                        ></Image>
-                        {
-                            showSpotifySignOut &&
-                            <button 
-                                className="w-35 py-3 pl-5 pr-6 top-12 right-0 absolute rounded-xl shadow-md border border-neutral-100 flex justify-between items-center bg-white hover:bg-neutral-100 cursor-pointer"
-                                onClick={() => {signOut({ callbackUrl: '/' })}}
-                                ref={signOutSpotify}
-                            >
-                                <CiLogout className="w-5 h-5" />
-                                <p className="text-left">Sign Out</p>
-                            </button>
-                        }
-                    </div>
+                    sessionSpotify && toFromContext != undefined && toFromContext.from == "Spotify" ?
+                    <SpotifyOptionsNavbar></SpotifyOptionsNavbar>
+                    :
+                    (
+                        sessionYouTube && toFromContext != undefined && toFromContext.from == "YouTube" ? 
+                            <YoutubeOptionsNavbar setSessionYouTube={setSessionYouTube}></YoutubeOptionsNavbar>
+                        :
+                            <SignInNavbar
+                            sessionSpotify={sessionSpotify}
+                            sessionYouTube={sessionYouTube}
+                            transferDirection={"from"}
+                            ></SignInNavbar>
+                    )
                 }
+                <FaArrowRightArrowLeft className="w-7 h-7" onClick={changeTransferOrder}/>
                 {
-                    sessionYouTube &&
-                    <div className="relative">
-                        <Image
-                            id="youtubeMusicLogo"
-                            src="/YouTubeMusicLogo.png"
-                            className='w-10 h-10 cursor-pointer'
-                            width={150} height={150}
-                            alt="YouTube Music logo"
-                            priority={true}
-                            onClick={() => {setShowYouTubeSignOut(!showYouTubeSignOut)}}
-                        ></Image>
-                        {
-                            showYouTubeSignOut &&
-                            <button 
-                                className="w-35 py-3 pl-5 pr-6 top-12 right-0 absolute rounded-xl shadow-md border border-neutral-100 flex justify-between items-center bg-white hover:bg-neutral-100 cursor-pointer"
-                                onClick={signOutOfYouTube}
-                                ref={signOutYouTube}
-                            >
-                                <CiLogout className="w-5 h-5" />
-                                <p className="text-left">Sign Out</p>
-                            </button>
-                        }
-                    </div>
+                    sessionSpotify && toFromContext != undefined && toFromContext.to == "Spotify" ?
+                    <SpotifyOptionsNavbar></SpotifyOptionsNavbar>
+                    :
+                    (
+                        sessionYouTube && toFromContext != undefined && toFromContext.to == "YouTube" ? 
+                            <YoutubeOptionsNavbar setSessionYouTube={setSessionYouTube}></YoutubeOptionsNavbar>
+                        :
+                            <SignInNavbar
+                            sessionSpotify={sessionSpotify}
+                            sessionYouTube={sessionYouTube}
+                            transferDirection={"to"}
+                            ></SignInNavbar>
+                    )
                 }
+                <div className="h-12 w-[0.1rem] bg-neutral-300 rounded-xl"></div>
                 <MdOutlineDarkMode className="w-10 h-10 cursor-pointer"/>
             </div>
         </nav>

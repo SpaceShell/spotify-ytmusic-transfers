@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useEffect, useState, useContext } from 'react';
 import { CgSpinner } from "react-icons/cg";
 import { getRelativeLuminance } from './color-formula';
-import { ItemsTransferContext } from "./transfer-context";
+import { ItemsTransferContext } from "./transfer-contexts";
 
 export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playlistTrackCount, index, view, viewTracksFunc, loadData}) {
 	const [mainColorBackground, setMainColorBackground] = useState("rgb(65, 65, 65)");
