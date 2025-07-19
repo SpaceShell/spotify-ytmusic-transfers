@@ -14,7 +14,7 @@ import { ToFromContext } from "./transfer/transfer-contexts";
 export function Navbar() {
     const { data: sessionSpotify } = useSession()
     const [sessionYouTube, setSessionYouTube] = useState(false)
-    const {toFromContext, setToFromContext} = useContext(ToFromContext)
+    let {toFromContext, setToFromContext} = useContext(ToFromContext)
 
     useEffect(() => {
         const checkSession = async () => {
@@ -29,31 +29,27 @@ export function Navbar() {
         }
 
         checkSession()
-        if (!(toFromContext == undefined)) {
-            setToFromContext(
-                {
-                    from: sessionStorage.getItem("transfer-from"),
-                    to: sessionStorage.getItem("transfer-to")
-                }
-            )
-        }
+        setToFromContext(
+            {
+                from: sessionStorage.getItem("transfer-from"),
+                to: sessionStorage.getItem("transfer-to")
+            }
+        )
     }, [])
 
     const changeTransferOrder = () => {
         const toStreamingPlatform = sessionStorage.getItem("transfer-to"); 
         const fromStreamingPlatform = sessionStorage.getItem("transfer-from"); 
 
-        sessionStorage.setItem("transfer-from", toStreamingPlatform),
-        sessionStorage.setItem("transfer-to", fromStreamingPlatform)
+        sessionStorage.setItem("transfer-from", toStreamingPlatform);
+        sessionStorage.setItem("transfer-to", fromStreamingPlatform);
 
-        if (!(toFromContext == undefined)) {
-            setToFromContext(
-                {
-                    from: sessionStorage.getItem("transfer-from"),
-                    to: sessionStorage.getItem("transfer-to")
-                }
-            )
-        }
+        setToFromContext(
+            {
+                from: sessionStorage.getItem("transfer-from"),
+                to: sessionStorage.getItem("transfer-to")
+            }
+        )
     }
 
     return (
@@ -65,12 +61,12 @@ export function Navbar() {
             </div>
             <div className="flex gap-5 items-center">
                 {
-                    sessionSpotify && toFromContext != undefined && toFromContext.from == "Spotify" ?
-                    <SpotifyOptionsNavbar></SpotifyOptionsNavbar>
+                    sessionSpotify && toFromContext.from == "Spotify" ?
+                    <SpotifyOptionsNavbar transferDirection={"from"}></SpotifyOptionsNavbar>
                     :
                     (
-                        sessionYouTube && toFromContext != undefined && toFromContext.from == "YouTube" ? 
-                            <YoutubeOptionsNavbar setSessionYouTube={setSessionYouTube}></YoutubeOptionsNavbar>
+                        sessionYouTube && toFromContext.from == "YouTube" ? 
+                            <YoutubeOptionsNavbar setSessionYouTube={setSessionYouTube} transferDirection={"from"}></YoutubeOptionsNavbar>
                         :
                             <SignInNavbar
                             sessionSpotify={sessionSpotify}
@@ -81,12 +77,12 @@ export function Navbar() {
                 }
                 <FaArrowRightArrowLeft className="w-7 h-7" onClick={changeTransferOrder}/>
                 {
-                    sessionSpotify && toFromContext != undefined && toFromContext.to == "Spotify" ?
-                    <SpotifyOptionsNavbar></SpotifyOptionsNavbar>
+                    sessionSpotify && toFromContext.to == "Spotify" ?
+                    <SpotifyOptionsNavbar transferDirection={"to"}></SpotifyOptionsNavbar>
                     :
                     (
-                        sessionYouTube && toFromContext != undefined && toFromContext.to == "YouTube" ? 
-                            <YoutubeOptionsNavbar setSessionYouTube={setSessionYouTube}></YoutubeOptionsNavbar>
+                        sessionYouTube && toFromContext.to == "YouTube" ? 
+                            <YoutubeOptionsNavbar setSessionYouTube={setSessionYouTube} transferDirection={"to"}></YoutubeOptionsNavbar>
                         :
                             <SignInNavbar
                             sessionSpotify={sessionSpotify}

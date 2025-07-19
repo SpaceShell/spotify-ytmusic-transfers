@@ -7,9 +7,11 @@ import { Navbar } from "./navbar";
 import Error from "./error-message";
 import { SpotifyLoginButton } from "./spotify-login-button";
 import { YTMusicLoginButton } from "./ytmusic-login-button";
+import { ToFromContext } from "./transfer/transfer-contexts";
 
 export default function Home() {
-	const [query, setQuery] = useState(new Set([]))
+	const [query, setQuery] = useState(new Set([]));
+	const [toFromContext, setToFromContext] = useState({from: undefined, to: undefined});
 	  
 	useEffect(() => {
 		const url = new URL(window.location.href);
@@ -24,7 +26,9 @@ export default function Home() {
 				query.has("authentication") && 
 				<Error error={"authentication"}></Error>
 			}
-			<Navbar></Navbar>
+			<ToFromContext value={{toFromContext, setToFromContext}}>
+				<Navbar></Navbar>
+			</ToFromContext>
 			<div className="mb-40 mt-20 mx-60 flex gap-55 relative">
 					<div>
 						<h1 className="font-bold text-6xl font-inter">Welcome to <br></br><span className="text-blue-700">Musi</span>Move</h1>

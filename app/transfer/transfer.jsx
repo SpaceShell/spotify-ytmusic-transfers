@@ -19,9 +19,8 @@ export function Transfer() {
                 }
             }
     });
-
     const [transferContext, setTransferContext] = useState({transfer: undefined, items: []});
-     const {toFromContext, setToFromContext} = useContext(ToFromContext);
+    const {toFromContext, setToFromContext} = useContext(ToFromContext);
 
     const transferToOtherPlatform = () => {
         console.log("Transfer Context", transferContext);

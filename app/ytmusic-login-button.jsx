@@ -11,7 +11,9 @@ export function YTMusicLoginButton() {
             method: "GET",
         }).then(async (response) => {
             const json = await response.json()
-            sessionStorage.setItem("transfer-from", "YouTube")
+            if (sessionStorage.getItem("transfer-to") != "YouTube") {
+                sessionStorage.setItem("transfer-from", "YouTube")
+            }
             router.push(json.url);
         });
     }

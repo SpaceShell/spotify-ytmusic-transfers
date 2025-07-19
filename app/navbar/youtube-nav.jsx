@@ -2,8 +2,9 @@ import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { CiLogout } from "react-icons/ci";
+import { useSession } from "next-auth/react";
 
-export function YoutubeOptionsNavbar({setSessionYouTube}) {
+export function YoutubeOptionsNavbar({setSessionYouTube, transferDirection}) {
     const [showYouTubeSignOut, setShowYouTubeSignOut] = useState(false)
     const signOutYouTube = useRef(undefined)
     const router = useRouter()
@@ -19,6 +20,7 @@ export function YoutubeOptionsNavbar({setSessionYouTube}) {
             });
         } catch {
             setSessionYouTube(false)
+            sessionStorage.setItem("transfer-" + transferDirection, undefined);
             router.push("/")
         }
     }
@@ -46,7 +48,7 @@ export function YoutubeOptionsNavbar({setSessionYouTube}) {
         <div className="relative" id="youtubeMusicOptions">
             <Image
                 src="/YouTubeMusicLogo.png"
-                className='w-9 h-9 cursor-pointer'
+                className='w-9 h-9 mx-0.5 cursor-pointer'
                 width={150} height={150}
                 alt="YouTube Music logo"
                 priority={true}

@@ -12,7 +12,9 @@ export function SpotifyLoginButton() {
         if (sessionSpotify) {
             router.push('/transfer')
         } else {
-            sessionStorage.setItem("transfer-from", "Spotify")
+            if (sessionStorage.getItem("transfer-to") != "Spotify") {
+                sessionStorage.setItem("transfer-from", "Spotify")
+            }
             signIn("spotify", { callbackUrl: '/transfer' })
         }
     }
