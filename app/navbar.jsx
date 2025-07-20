@@ -9,12 +9,13 @@ import { FaArrowRightArrowLeft } from "react-icons/fa6";
 import { SignInNavbar } from "./navbar/sign-in-nav";
 import { YoutubeOptionsNavbar } from "./navbar/youtube-nav";
 import { SpotifyOptionsNavbar } from "./navbar/spotify-nav";
-import { ToFromContext } from "./transfer/transfer-contexts";
+import { ToFromContext, ItemsTransferContext } from "./transfer/transfer-contexts";
 
 export function Navbar() {
     const { data: sessionSpotify } = useSession()
     const [sessionYouTube, setSessionYouTube] = useState(false)
-    let {toFromContext, setToFromContext} = useContext(ToFromContext)
+    const {toFromContext, setToFromContext} = useContext(ToFromContext)
+    const {setTransferContext} = useContext(ItemsTransferContext)
 
     useEffect(() => {
         const checkSession = async () => {
@@ -24,6 +25,16 @@ export function Navbar() {
             }).then(async (response) => {
                 const session = await response.json()
 
+                if (session.session == false) {
+                    const transferContext = {
+                        from: sessionStorage.getItem("transfer-from"),
+                        to: sessionStorage.getItem("transfer-to")
+                    }
+
+                    sessionStorage.removeItem(
+                        transferContext.from == "YouTube" ? "transfer-from" : "transfer-to"
+                    );
+                }
                 setSessionYouTube(session.session)
             });
         }
@@ -59,6 +70,13 @@ export function Navbar() {
                 to: sessionStorage.getItem("transfer-to")
             }
         )
+        setTransferContext(
+            {
+                transfer: undefined,
+                items: [],
+                to: []
+            }
+        )
     }
 
     return (
@@ -84,7 +102,7 @@ export function Navbar() {
                             ></SignInNavbar>
                     )
                 }
-                <FaArrowRightArrowLeft className="w-7 h-7" onClick={changeTransferOrder}/>
+                <FaArrowRightArrowLeft className="w-7 h-7 cursor-pointer" onClick={changeTransferOrder}/>
                 {
                     sessionSpotify && toFromContext.to == "Spotify" ?
                     <SpotifyOptionsNavbar transferDirection={"to"}></SpotifyOptionsNavbar>

@@ -8,9 +8,9 @@ export function PlatformHeader({allPlaylistText, view, setViewFunc, musicLayout,
     return (
         <div className="flex justify-between">
             <div className={view == null ? "mb-9" : ""}>
-            <h2 className="font-bold text-3xl font-inter text-ellipsis overflow-hidden">
-                {view == null ? allPlaylistText : view}
-            </h2>
+                <h2 className="font-bold text-3xl font-inter text-ellipsis overflow-hidden">
+                    {view == null ? allPlaylistText : view}
+                </h2>
             </div>
             {
             view == null ?

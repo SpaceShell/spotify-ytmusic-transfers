@@ -4,14 +4,26 @@ import Image from 'next/image';
 import { useEffect, useState, useContext } from 'react';
 import { CgSpinner } from "react-icons/cg";
 import { getRelativeLuminance } from './color-formula';
-import { ItemsTransferContext } from "./transfer-contexts";
+import { ItemsTransferContext, ToFromContext } from "./transfer-contexts";
 
-export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playlistTrackCount, index, view, viewTracksFunc, loadData}) {
+export function PlaylistBlock({
+	playlistImage,
+	playlistName,
+	playlistOwner,
+	playlistTrackCount,
+	index,
+	view,
+	viewTracksFunc,
+	loadData,
+	platform
+}) {
 	const [mainColorBackground, setMainColorBackground] = useState("rgb(65, 65, 65)");
 	const [playlistButtonClass, setPlaylistButtonClass] = useState("");
 	const [clicked, setClicked] = useState(false);
 	const [loaded, setLoaded] = useState(false);
+
 	const {transferContext, setTransferContext} = useContext(ItemsTransferContext)
+	const {toFromContext} = useContext(ToFromContext);
 
 	useEffect(() => {
 		const getImageColor = async () => {
@@ -74,10 +86,34 @@ export function PlaylistBlock({playlistImage, playlistName, playlistOwner, playl
 			transferContext.items = [];
 		}
 		
-		if (clicked == true) {
-			setTransferContext({transfer: "playlists", items: [...transferContext.items, index]});
-		} else if (clicked == false && transferContext.items != []) {
-			setTransferContext({transfer: "playlists", items: transferContext.items.filter((elem) => elem != index)});
+		if (toFromContext.from == platform) {
+			if (clicked == true) {
+				setTransferContext({
+					transfer: "playlists",
+					items: [...transferContext.items, index],
+					to: [...transferContext.to]
+				});
+			} else if (clicked == false && transferContext.items != []) {
+				setTransferContext({
+					transfer: "playlists",
+					items: transferContext.items.filter((elem) => elem != index),
+					to: [...transferContext.to]
+				});
+			}
+		} else {
+			if (clicked == true) {
+				setTransferContext({
+					transfer: transferContext.transfer,
+					items: [...transferContext.items],
+					to: [...transferContext.to, index]
+				});
+			} else if (clicked == false && transferContext.items != []) {
+				setTransferContext({
+					transfer: transferContext.transfer,
+					items: [...transferContext.items],
+					to: transferContext.to.filter((elem) => elem != index)
+				});
+			}
 		}
 	}, [clicked])
 

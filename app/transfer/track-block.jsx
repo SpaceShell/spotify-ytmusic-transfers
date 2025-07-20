@@ -4,7 +4,16 @@ import Image from 'next/image';
 import { useState, useEffect, useContext } from 'react';
 import { ItemsTransferContext } from "./transfer-contexts";
 
-export function TrackBlock({index, albumImage, album, trackName, artists, date_added, duration}) {
+export function TrackBlock({
+    index,
+    albumImage,
+    album,
+    trackName,
+    artists,
+    date_added,
+    duration,
+    viewOnly=false
+}) {
     let timeDuration = "---";
 
     if (duration != "---") {
@@ -18,21 +27,31 @@ export function TrackBlock({index, albumImage, album, trackName, artists, date_a
     const {transferContext, setTransferContext} = useContext(ItemsTransferContext);
 
     useEffect(() => {
+        if (!viewOnly == true) {
             if (transferContext.transfer != "tracks") {
                 transferContext.items = [];
             }
             
             if (clicked == true) {
-                setTransferContext({transfer: "tracks", items: [...transferContext.items, index]});
+                setTransferContext({
+                    transfer: "tracks",
+                    items: [...transferContext.items, index],
+                    to: [...transferContext.to]
+                });
             } else if (clicked == false && transferContext.items != []) {
-                setTransferContext({transfer: "tracks", items: transferContext.items.filter((elem) => elem != index)});
+                setTransferContext({
+                    transfer: "tracks",
+                    items: transferContext.items.filter((elem) => elem != index),
+                    to: [...transferContext.to]
+                });
             }
+        }
     }, [clicked])
     
     return (
         <>
             <div 
-            className={`w-full h-min py-2 px-4 flex items-center transition shadow-md rounded-sm outline-neutral-500 outline-neutral-500 hover:bg-neutral-100 ${clicked ? "outline-3 bg-[#414141]/8" : ""}`}
+            className={`w-full h-min py-2 px-4 flex items-center transition shadow-md rounded-sm outline-neutral-500 outline-neutral-500 hover:bg-neutral-100 ${clicked && !viewOnly ? "outline-3 bg-[#414141]/8" : ""}`}
             onClick={() => {setClicked(!clicked)}}
             >
                 <div className='w-full flex gap-5 items-center'>

@@ -2,13 +2,11 @@ import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { CiLogout } from "react-icons/ci";
-import { useSession } from "next-auth/react";
 
 export function YoutubeOptionsNavbar({setSessionYouTube, transferDirection}) {
-    const [showYouTubeSignOut, setShowYouTubeSignOut] = useState(false)
-    const signOutYouTube = useRef(undefined)
-    const router = useRouter()
-    const {toFromContext, setToFromContext} = useContext(ToFromContext);
+    const [showYouTubeSignOut, setShowYouTubeSignOut] = useState(false);
+    const signOutYouTube = useRef(undefined);
+    const router = useRouter();
 
     const signOutOfYouTube = async () => {
         try {
@@ -16,13 +14,13 @@ export function YoutubeOptionsNavbar({setSessionYouTube, transferDirection}) {
                 method: "POST",
                 body: JSON.stringify({ action: "signOut" }),
             }).then(async (res) => {
-                setSessionYouTube(false)
-                router.push("/")
+                setSessionYouTube(false);
+                router.push("/");
             });
         } catch {
-            setSessionYouTube(false)
+            setSessionYouTube(false);
             sessionStorage.removeItem("transfer-" + transferDirection);
-            router.push("/")
+            router.push("/");
         }
     }
 
@@ -35,7 +33,7 @@ export function YoutubeOptionsNavbar({setSessionYouTube, transferDirection}) {
                 e.target != document.getElementById("youtubeMusicOptions") &&
                 !document.getElementById("youtubeMusicOptions").contains(e.target)
             ) {
-                setShowYouTubeSignOut(false)
+                setShowYouTubeSignOut(false);
             }
         }
 
