@@ -50,7 +50,9 @@ export function SignInNavbar({sessionSpotify, sessionYouTube, transferDirection}
                 showSignIn &&
                 <div className="w-max h-min absolute right-0 top-12 rounded-xl outline-2 outline-neutral-200">  
                 {    
-                    !sessionSpotify &&          
+                    (!sessionSpotify ||
+                    (sessionStorage.getItem("transfer-from") != "Spotify" &&
+                    sessionStorage.getItem("transfer-to") != "Spotify")) &&    
                     <button 
                     className="w-full py-3 pl-5 pr-6 flex gap-3 items-center bg-white hover:bg-neutral-100 cursor-pointer"
                     onClick={() => {signInTransfer("Spotify")}}
@@ -60,7 +62,9 @@ export function SignInNavbar({sessionSpotify, sessionYouTube, transferDirection}
                     </button>
                 }
                 {
-                    !sessionYouTube &&
+                    (!sessionYouTube ||
+                    (sessionStorage.getItem("transfer-from") != "YouTube" &&
+                    sessionStorage.getItem("transfer-to") != "YouTube")) &&
                     <button 
                     className="w-full py-3 pl-5 pr-5 flex gap-3 items-center bg-white hover:bg-neutral-100 cursor-pointer"
                     onClick={() => {signInTransfer("YouTube")}}

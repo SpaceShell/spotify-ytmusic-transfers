@@ -39,6 +39,8 @@ export function Navbar() {
             });
         }
 
+        console.log(sessionStorage.getItem("transfer-to"))
+
         checkSession()
         setToFromContext(
             {

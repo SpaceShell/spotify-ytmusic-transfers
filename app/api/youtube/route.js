@@ -83,7 +83,7 @@ async function youTubeSignIn(reqBody) {
         code: reqBody.code,
         code_verifier: cookieStore.get('verifier').value,
         grant_type: "authorization_code",
-        redirect_uri: "http://localhost:3000/oauth2callback",
+        redirect_uri: "http://localhost:3000/oauth2callback"
     });
     
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
@@ -139,4 +139,26 @@ async function youtubeSignOut() {
 
     cookieStore.delete("access_token")
     return Response.json(response);
+}
+
+async function addTracks() {
+    const cookieStore = await cookies();
+
+    const tracksResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet`, {
+        headers: {
+            Authorization: `Bearer ${cookieStore.get("access_token").value}`
+        },
+        body: JSON.stringify({
+            snippet: {
+            playlistId: "YOUR_PLAYLIST_ID",
+            resourceId: {
+                kind: "youtube#video",
+                videoId: "VIDEO_ID_TO_ADD"
+                }
+            }
+        })
+    });
+    const tracksData = await tracksResponse.json();
+
+    return Response.json(tracksData);
 }
