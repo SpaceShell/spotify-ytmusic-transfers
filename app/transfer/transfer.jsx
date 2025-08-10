@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { YouTubeTransfer } from "./youtube-section";
@@ -22,12 +22,49 @@ export function Transfer() {
     const {toFromContext} = useContext(ToFromContext);
     const {transferContext} = useContext(ItemsTransferContext)
 
-    useEffect(() => {
-        console.log(toFromContext)
-    }, [toFromContext])
+    const transferToOtherPlatform = async () => {
+        // console.log("Transfer Context", transferContext);
+        // console.log("To From Context", toFromContext);
 
-    const transferToOtherPlatform = () => {
-        console.log("Transfer Context", transferContext);
+        for (let itemFrom of transferContext.items) {
+            const indexFrom = itemFrom[0];
+            const getTracksFuncFrom = itemFrom[1];
+            const tracksListFrom = await getTracksFuncFrom(indexFrom);
+            
+            console.log(tracksListFrom, transferContext.to)
+
+            if (toFromContext.to == "YouTube") {
+                const updates = await fetch('/api/youtube', {
+                    method: "POST",
+                    body: JSON.stringify({action: "transferTracks", tracks: tracksListFrom, toPlaylists: transferContext.to}),
+                })
+
+                const reader = updates.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    let lines = buffer.split('\n');
+                    buffer = lines.pop();
+
+                    for (const line of lines) {
+                        if (line.trim()) {
+                            let transferResponse = JSON.parse(line)
+                            console.log('Got video result:', transferResponse);
+                            if (transferResponse.kind == "youtube#playlistItem") {
+                                
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        }
     }
 
     return (

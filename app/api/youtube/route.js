@@ -69,6 +69,8 @@ export async function POST(req) {
             return Response.json({session: false})
         }
         return Response.json({session: true})
+    } else if (reqBody.action == "transferTracks") {
+        return await addTracks({tracks: reqBody.tracks, toPlaylists: reqBody.toPlaylists})
     }
     return new Response("Invalid action given", { status: 400 });
 }
@@ -141,24 +143,56 @@ async function youtubeSignOut() {
     return Response.json(response);
 }
 
-async function addTracks() {
+async function addTracks(transfer) {
     const cookieStore = await cookies();
 
-    const tracksResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet`, {
-        headers: {
-            Authorization: `Bearer ${cookieStore.get("access_token").value}`
-        },
-        body: JSON.stringify({
-            snippet: {
-            playlistId: "YOUR_PLAYLIST_ID",
-            resourceId: {
-                kind: "youtube#video",
-                videoId: "VIDEO_ID_TO_ADD"
+    const stream = new ReadableStream({
+        async start(controller) {
+            for (const track of transfer.tracks) {
+
+                const artists = track.track.artists.map((artist) => {return artist.name})
+                const q = `${track.track.name} by ${artists.join(", ")} - Official`
+                const searchResponse = await fetch(
+                    `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(q)}`, {
+                    headers: {
+                        Authorization: `Bearer ${cookieStore.get("access_token").value}`
+                    }
+                });
+                const searchData = await searchResponse.json();
+                controller.enqueue(
+                    new TextEncoder().encode(JSON.stringify(searchData) + '\n')
+                );
+
+                for (const playlist of transfer.toPlaylists) {
+                    const transferResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet`, {
+                        method: 'POST',
+                        headers: {
+                            Authorization: `Bearer ${cookieStore.get("access_token").value}`
+                        },
+                        body: JSON.stringify({
+                            snippet: {
+                            playlistId: playlist[1].id,
+                            resourceId: {
+                                kind: "youtube#video",
+                                videoId: searchData.items[0].id.videoId
+                                }
+                            }
+                        })
+                    });
+                    const transferData = await transferResponse.json();
+                    controller.enqueue(
+                        new TextEncoder().encode(JSON.stringify(transferData) + '\n')
+                    );
                 }
             }
-        })
-    });
-    const tracksData = await tracksResponse.json();
+            controller.close();
+        }
+    })
 
-    return Response.json(tracksData);
+    return new Response(stream, {
+        headers: {
+            'Content-Type': 'application/x-ndjson',
+            'Transfer-Encoding': 'chunked',
+        }
+    });
 }

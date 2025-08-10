@@ -34,12 +34,14 @@ export function TrackBlock({
             
             if (clicked == true) {
                 setTransferContext({
+                    ...transferContext, 
                     transfer: "tracks",
                     items: [...transferContext.items, index],
                     to: [...transferContext.to]
                 });
             } else if (clicked == false && transferContext.items != []) {
                 setTransferContext({
+                    ...transferContext, 
                     transfer: "tracks",
                     items: transferContext.items.filter((elem) => elem != index),
                     to: [...transferContext.to]

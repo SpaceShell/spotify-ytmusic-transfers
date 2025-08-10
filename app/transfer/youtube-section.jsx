@@ -55,12 +55,14 @@ export function YouTubeTransfer() {
 		
 		if (createPlaylist == true) {
 			setTransferContext({
+                ...transferContext, 
                 transfer: "playlists",
                 items: [...transferContext.items],
                 to: [...transferContext.to, "create"]
             });
 		} else if (createPlaylist == false && transferContext.items != []) {
 			setTransferContext({
+                ...transferContext, 
                 transfer: "playlists",
                 items: [...transferContext.items],
                 to: transferContext.to.filter((elem) => elem != "create")
@@ -86,6 +88,25 @@ export function YouTubeTransfer() {
         setView(playlistName);
     }
 
+    const getTracks = async (playlistIndex) => {
+		if (playlists[playlistIndex].id in (playlistTrackData.current)) {
+			return playlistTrackData.current[playlists[playlistIndex].id];
+		} else {
+			const response = await fetch('/api/youtube', {
+				method: "POST",
+				body: JSON.stringify({ playlistId: playlists[playlistIndex].id, action: "retrieveTracks" }),
+			})
+            
+            const jsonTracks = await response.json();
+            playlistTrackData.current[playlists[playlistIndex].id] = jsonTracks.items;
+            return jsonTracks.items;
+		}
+	}
+
+    const editTracks = async (playlistIndex, playlistItem) => {
+        playlistTrackData.current[playlists[playlistIndex].id].push(playlistItem)
+	}
+
     return (
         <section>
             <PlatformHeader
@@ -110,6 +131,8 @@ export function YouTubeTransfer() {
                             view={musicLayout}
                             viewTracksFunc={viewTracks}
                             loadData={playlistLoadData.current}
+                            playlistData={playlists}
+                            getTracks={getTracks}
                             platform={"YouTube"}
                         ></PlaylistBlock>
                         ))}

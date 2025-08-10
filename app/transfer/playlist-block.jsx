@@ -15,6 +15,9 @@ export function PlaylistBlock({
 	view,
 	viewTracksFunc,
 	loadData,
+	playlistData,
+	likedPlaylistData=undefined,
+	getTracks,
 	platform
 }) {
 	const [mainColorBackground, setMainColorBackground] = useState("rgb(65, 65, 65)");
@@ -89,29 +92,33 @@ export function PlaylistBlock({
 		if (toFromContext.from == platform) {
 			if (clicked == true) {
 				setTransferContext({
+					...transferContext, 
 					transfer: "playlists",
-					items: [...transferContext.items, index],
+					items: [...transferContext.items, [index, getTracks]],
 					to: [...transferContext.to]
 				});
 			} else if (clicked == false && transferContext.items != []) {
 				setTransferContext({
+					...transferContext, 
 					transfer: "playlists",
-					items: transferContext.items.filter((elem) => elem != index),
+					items: transferContext.items.filter((elem) => elem[0] != index),
 					to: [...transferContext.to]
 				});
 			}
 		} else {
 			if (clicked == true) {
 				setTransferContext({
+					...transferContext, 
 					transfer: transferContext.transfer,
 					items: [...transferContext.items],
-					to: [...transferContext.to, index]
+					to: [...transferContext.to, [index, index == "Like" ? likedPlaylistData : playlistData[index]]]
 				});
 			} else if (clicked == false && transferContext.items != []) {
 				setTransferContext({
+					...transferContext, 
 					transfer: transferContext.transfer,
 					items: [...transferContext.items],
-					to: transferContext.to.filter((elem) => elem != index)
+					to: transferContext.to.filter((elem) => elem[0] != index)
 				});
 			}
 		}

@@ -59,15 +59,17 @@ export function SpotifyTransfer() {
 		
 		if (createPlaylist == true) {
 			setTransferContext({
+                ...transferContext,  
                 transfer: "playlists",
                 items: [...transferContext.items],
-                to: [...transferContext.to, "create"]
+                to: [...transferContext.to, ["create", getTracks]]
             });
 		} else if (createPlaylist == false && transferContext.items != []) {
 			setTransferContext({
+                ...transferContext, 
                 transfer: "playlists",
                 items: [...transferContext.items],
-                to: transferContext.to.filter((elem) => elem != "create")
+                to: transferContext.to.filter((elem) => elem[0] != "create")
             });
 		}
 	}, [createPlaylist])
@@ -92,6 +94,20 @@ export function SpotifyTransfer() {
         setView(playlistName);
     }
 
+    const getTracks = async (playlistIndex) => {
+        if (playlistIndex == "Like") {
+            return likedPlaylist.items
+        } else if (playlists[playlistIndex].id in playlistTrackData.current) {
+			return playlistTrackData.current[playlists[playlistIndex].id];
+		} else {
+			const data = await authOptions.callbacks.getPlaylistTracks(
+                sessionSpotify.accessToken, playlists[playlistIndex].tracks.href
+            )
+            playlistTrackData.current[playlists[playlistIndex].id] = data.items;
+            return data.items;
+		}
+	}
+
     return (
         <section>
             <PlatformHeader
@@ -115,6 +131,9 @@ export function SpotifyTransfer() {
                         view={musicLayout}
                         viewTracksFunc={viewTracks}
                         loadData={playlistLoadData.current}
+                        playlistData={playlists}
+                        likedPlaylistData={likedPlaylist}
+                        getTracks={getTracks}
                         platform={"Spotify"}
                     ></PlaylistBlock>}
                     {playlists.map((playlist, index) => (
@@ -127,7 +146,10 @@ export function SpotifyTransfer() {
                         index={index}
                         view={musicLayout}
                         viewTracksFunc={viewTracks}
-                        loadData = {playlistLoadData.current}
+                        loadData={playlistLoadData.current}
+                        playlistData={playlists}
+                        likedPlaylistData={likedPlaylist}
+                        getTracks={getTracks}
                         platform={"Spotify"}
                     ></PlaylistBlock>
                     ))}

@@ -39,8 +39,6 @@ export function Navbar() {
             });
         }
 
-        console.log(sessionStorage.getItem("transfer-to"))
-
         checkSession()
         setToFromContext(
             {
@@ -76,7 +74,9 @@ export function Navbar() {
             {
                 transfer: undefined,
                 items: [],
-                to: []
+                to: [], 
+                status: "unstarted",
+                response: undefined
             }
         )
     }

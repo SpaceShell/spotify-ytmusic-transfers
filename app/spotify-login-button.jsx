@@ -12,9 +12,9 @@ export function SpotifyLoginButton() {
         if (sessionSpotify) {
             router.push('/transfer')
         } else {
-            if (sessionStorage.getItem("transfer-to") != "Spotify" && sessionStorage.getItem("transfer-from") != undefined) {
+            if (sessionStorage.getItem("transfer-to") != "Spotify" && sessionStorage.getItem("transfer-from") == null) {
                 sessionStorage.setItem("transfer-from", "Spotify")
-            } else if (sessionStorage.getItem("transfer-from") != "Spotify" && sessionStorage.getItem("transfer-to") != undefined) {
+            } else if (sessionStorage.getItem("transfer-from") != "Spotify" && sessionStorage.getItem("transfer-to") == null) {
                 sessionStorage.setItem("transfer-to", "Spotify")
             }
             signIn("spotify", { callbackUrl: '/transfer' })
