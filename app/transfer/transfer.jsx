@@ -54,12 +54,19 @@ export function Transfer() {
                     let lines = buffer.split('\n');
                     buffer = lines.pop();
 
+                    let currentPlaylistTo;
+
                     for (const line of lines) {
                         if (line.trim()) {
                             let transferResponse = JSON.parse(line)
+                            
                             console.log('Got video result:', transferResponse);
-                            if (transferResponse.kind == "youtube#playlistItem") {
-                                setTransferProgess(`Transferred ${transferResponse.snippet.title}...`)
+                            if (transferResponse.playlistIndex != undefined) {
+                                currentPlaylistTo = transferResponse.playlistIndex
+                                console.log("current playlist to", currentPlaylistTo)
+                            } else if (transferResponse.kind == "youtube#playlistItem") {
+                                transferContext.updateFunc(currentPlaylistTo[0], transferResponse)
+                                setTransferProgess(`Transferred ${transferResponse.snippet.title} in playlist ${currentPlaylistTo[1].snippet.title}...`)
                             }
                         }
                     }
@@ -69,7 +76,7 @@ export function Transfer() {
             }
         }
         setTransferProgess("Transfer complete")
-        setTimeout(() => {setTransferProgess("")}, 1000)
+        setTimeout(() => {setTransferProgess("")}, 1500)
     }
 
     return (

@@ -7,23 +7,23 @@ import { getRelativeLuminance } from './color-formula';
 import { ItemsTransferContext, ToFromContext } from "./transfer-contexts";
 
 export function PlaylistBlock({
+	index,
+	getTracksFunc,
+	likedPlaylistData=undefined,
+	platform,
 	playlistImage,
 	playlistName,
 	playlistOwner,
 	playlistTrackCount,
-	index,
+	playlistsData,
 	view,
-	viewTracksFunc,
-	loadData,
-	playlistData,
-	likedPlaylistData=undefined,
-	getTracks,
-	platform
+	viewTracksFunc
 }) {
 	const [mainColorBackground, setMainColorBackground] = useState("rgb(65, 65, 65)");
 	const [playlistButtonClass, setPlaylistButtonClass] = useState("");
 	const [clicked, setClicked] = useState(false);
 	const [loaded, setLoaded] = useState(false);
+	const [trackCount, setTrackCount] = useState(playlistTrackCount)
 
 	const {transferContext, setTransferContext} = useContext(ItemsTransferContext)
 	const {toFromContext} = useContext(ToFromContext);
@@ -49,11 +49,11 @@ export function PlaylistBlock({
 					if (relativeLuminance > 0.75) {
 						let lighterBackground = `rgb(${rgb[0] * 0.2},${rgb[1] * 0.2},${rgb[2] * 0.2})`;
 						setMainColorBackground(lighterBackground);
-						loadData[index] = lighterBackground;
+						playlistsData.load[index] = lighterBackground;
 					} else {
 						let background = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
 						setMainColorBackground(background);
-						loadData[index] = background;
+						playlistsData.load[index] = background;
 					}
 					setLoaded(true);
 				}
@@ -69,8 +69,8 @@ export function PlaylistBlock({
 			}
 		}
 
-		if (index in loadData) {
-			setMainColorBackground(loadData[index]);
+		if (index in playlistsData.load) {
+			setMainColorBackground(playlistsData.load[index]);
 			setLoaded(true);
 		} else {
 			if (playlistImage == "/LikeImage.png") {
@@ -94,15 +94,17 @@ export function PlaylistBlock({
 				setTransferContext({
 					...transferContext, 
 					transfer: "playlists",
-					items: [...transferContext.items, [index, getTracks]],
-					to: [...transferContext.to]
+					items: [...transferContext.items, [index, getTracksFunc]],
+					to: [...transferContext.to],
+					updateFunc: editTracksWithPlaylist
 				});
 			} else if (clicked == false && transferContext.items != []) {
 				setTransferContext({
 					...transferContext, 
 					transfer: "playlists",
 					items: transferContext.items.filter((elem) => elem[0] != index),
-					to: [...transferContext.to]
+					to: [...transferContext.to],
+					updateFunc: editTracksWithPlaylist
 				});
 			}
 		} else {
@@ -111,18 +113,32 @@ export function PlaylistBlock({
 					...transferContext, 
 					transfer: transferContext.transfer,
 					items: [...transferContext.items],
-					to: [...transferContext.to, [index, index == "Like" ? likedPlaylistData : playlistData[index]]]
+					to: [...transferContext.to, [index, index == "Like" ? likedPlaylistData : playlistsData.playlists[index]]],
+					updateFunc: editTracksWithPlaylist
 				});
 			} else if (clicked == false && transferContext.items != []) {
 				setTransferContext({
 					...transferContext, 
 					transfer: transferContext.transfer,
 					items: [...transferContext.items],
-					to: transferContext.to.filter((elem) => elem[0] != index)
+					to: transferContext.to.filter((elem) => elem[0] != index),
+					updateFunc: editTracksWithPlaylist
 				});
 			}
 		}
 	}, [clicked])
+
+    const editTracksWithPlaylist = async (playlistIndex, playlistItem) => {
+		if (playlistsData.playlists[playlistIndex].id in (playlistsData.tracks)) {
+			playlistsData.tracks[playlistsData.playlists[playlistIndex].id].push(playlistItem);
+		}
+		setTrackCount(trackCount + 1);
+		console.log("EDITS", toFromContext.to, playlistsData)
+		if (toFromContext.to == "YouTube") {
+			console.log("added")
+			playlistsData.playlists[playlistIndex].contentDetails.itemCount += 1
+		}
+	}
 
 	return (
 		<>
@@ -162,7 +178,7 @@ export function PlaylistBlock({
 						<div className='w-30'>
 							<p className='font-bold whitespace-nowrap text-ellipsis overflow-hidden text-lg'>{playlistName}</p>
 							<p className='mt-1 text-sm'>{playlistOwner}</p>
-							<p className='text-sm'>{playlistTrackCount} {playlistTrackCount == 1 ? "song" : "songs"}</p>
+							<p className='text-sm'>{trackCount} {trackCount == 1 ? "song" : "songs"}</p>
 							<button 
 							className={`${playlistButtonClass} mt-3 font-semibold border-3 rounded-lg py-1 px-3 text-sm cursor-pointer bg-transparent border-stone-800 text-stone-800 transition-colors`}
 							onClick={(e) => {
@@ -185,7 +201,7 @@ export function PlaylistBlock({
 							<div className='w-full'>
 								<p className='font-bold whitespace-nowrap text-ellipsis overflow-hidden text-md'>{playlistName}</p>
 								<p className='text-sm'>{playlistOwner}</p>
-								<p className='text-sm'>{playlistTrackCount} {playlistTrackCount == 1 ? "song" : "songs"}</p>
+								<p className='text-sm'>{trackCount} {trackCount == 1 ? "song" : "songs"}</p>
 							</div>
 						</div>
 						<button 

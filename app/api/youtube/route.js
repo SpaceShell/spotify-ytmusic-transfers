@@ -181,7 +181,10 @@ async function addTracks(transfer) {
                     });
                     const transferData = await transferResponse.json();
                     controller.enqueue(
-                        new TextEncoder().encode(JSON.stringify(transferData) + '\n')
+                        new TextEncoder().encode(
+                            JSON.stringify({playlistIndex: playlist}) + '\n' +
+                            JSON.stringify(transferData) + '\n'
+                        )
                     );
                 }
             }

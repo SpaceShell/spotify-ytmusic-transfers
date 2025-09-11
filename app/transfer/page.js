@@ -8,7 +8,7 @@ import { ToFromContext, ItemsTransferContext } from "./transfer-contexts";
 
 export default function TransferPage() {
     const [toFromContext, setToFromContext] = useState({from: undefined, to: undefined});
-    const [transferContext, setTransferContext] = useState({transfer: undefined, items: [], to: [], status: "unstarted", response: undefined});
+    const [transferContext, setTransferContext] = useState({transfer: undefined, items: [], to: [], status: "unstarted", updateFunc: undefined});
 
     return (
         <ToFromContext value={{toFromContext, setToFromContext}}>

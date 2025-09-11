@@ -123,34 +123,40 @@ export function SpotifyTransfer() {
                 <div className={`w-172 h-130 grid overflow-y-auto px-4 py-3 auto-rows-min ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 gap-1"}`} ref={scrollSection}>
                     {sessionSpotify && 
                     <PlaylistBlock 
+                        index={"Like"}
+                        getTracksFunc={getTracks}
+                        likedPlaylistData={likedPlaylist}
+                        platform={"Spotify"}
                         playlistImage={"/LikeImage.png"}
                         playlistName={"Liked Songs"}
                         playlistOwner={sessionSpotify.user.name}
                         playlistTrackCount={likedPlaylist.total}
-                        index={"Like"}
+                        playlistsData = {{
+                            "playlists": playlists,
+                            "tracks": playlistTrackData.current,
+                            "load": playlistLoadData.current
+                        }}
                         view={musicLayout}
                         viewTracksFunc={viewTracks}
-                        loadData={playlistLoadData.current}
-                        playlistData={playlists}
-                        likedPlaylistData={likedPlaylist}
-                        getTracks={getTracks}
-                        platform={"Spotify"}
                     ></PlaylistBlock>}
                     {playlists.map((playlist, index) => (
                     <PlaylistBlock
                         key={index}
+                        index={index}
+                        getTracksFunc={getTracks}
+                        likedPlaylistData={likedPlaylist}
+                        platform={"Spotify"}
                         playlistImage={playlist.images ? playlist.images[0].url : "/EmptyPlaylist.png"}
                         playlistName={playlist.name}
                         playlistOwner={playlist.owner.display_name}
                         playlistTrackCount={playlist.tracks.total}
-                        index={index}
+                        playlistsData = {{
+                            "playlists": playlists,
+                            "tracks": playlistTrackData.current,
+                            "load": playlistLoadData.current
+                        }}
                         view={musicLayout}
                         viewTracksFunc={viewTracks}
-                        loadData={playlistLoadData.current}
-                        playlistData={playlists}
-                        likedPlaylistData={likedPlaylist}
-                        getTracks={getTracks}
-                        platform={"Spotify"}
                     ></PlaylistBlock>
                     ))}
                     {toFromContext.to == "Spotify" ?

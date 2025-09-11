@@ -103,10 +103,6 @@ export function YouTubeTransfer() {
 		}
 	}
 
-    const editTracksWithPlaylist = async (playlistIndex, playlistItem) => {
-        playlistTrackData.current[playlists[playlistIndex].id].push(playlistItem)
-	}
-
     return (
         <section>
             <PlatformHeader
@@ -122,18 +118,21 @@ export function YouTubeTransfer() {
                     <div className={`w-172 h-130 grid overflow-y-auto px-4 py-3 auto-rows-min ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 gap-1"}`} ref={scrollSection}>
                         {playlists.map((playlist, index) => (
                         <PlaylistBlock
+                            index={index}
+                            getTracksFunc={getTracks}
                             key={index}
+                            platform={"YouTube"}
                             playlistImage={playlist.snippet.thumbnails ? playlist.snippet.thumbnails.standard.url : "/EmptyPlaylist.png"}
                             playlistName={playlist.snippet.title}
                             playlistOwner={playlist.snippet.channelTitle}
                             playlistTrackCount={playlist.contentDetails.itemCount}
-                            index={index}
+                            playlistsData = {{
+                                "playlists": playlists,
+                                "tracks": playlistTrackData.current,
+                                "load": playlistLoadData.current
+                            }}
                             view={musicLayout}
                             viewTracksFunc={viewTracks}
-                            loadData={playlistLoadData.current}
-                            playlistData={playlists}
-                            getTracks={getTracks}
-                            platform={"YouTube"}
                         ></PlaylistBlock>
                         ))}
                         {toFromContext.to == "YouTube" ?
