@@ -103,7 +103,7 @@ export function YouTubeTransfer() {
 		}
 	}
 
-    const editTracks = async (playlistIndex, playlistItem) => {
+    const editTracksWithPlaylist = async (playlistIndex, playlistItem) => {
         playlistTrackData.current[playlists[playlistIndex].id].push(playlistItem)
 	}
 

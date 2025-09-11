@@ -1,11 +1,12 @@
 "use client"
 
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { YouTubeTransfer } from "./youtube-section";
 import { SpotifyTransfer } from "./spotify-section";
 import { ToFromContext, ItemsTransferContext } from './transfer-contexts';
+import { CgSpinner } from "react-icons/cg";
 import { PiArrowFatLinesRightFill } from "react-icons/pi";
 import { EmptyTransfer } from './empty-section';
 
@@ -21,10 +22,12 @@ export function Transfer() {
     });
     const {toFromContext} = useContext(ToFromContext);
     const {transferContext} = useContext(ItemsTransferContext)
+    const [transferProgress, setTransferProgess] = useState("")
 
     const transferToOtherPlatform = async () => {
-        // console.log("Transfer Context", transferContext);
-        // console.log("To From Context", toFromContext);
+        console.log("Transfer Context", transferContext);
+        console.log("To From Context", toFromContext);
+        setTransferProgess("Transferring, please wait...")
 
         for (let itemFrom of transferContext.items) {
             const indexFrom = itemFrom[0];
@@ -56,7 +59,7 @@ export function Transfer() {
                             let transferResponse = JSON.parse(line)
                             console.log('Got video result:', transferResponse);
                             if (transferResponse.kind == "youtube#playlistItem") {
-                                
+                                setTransferProgess(`Transferred ${transferResponse.snippet.title}...`)
                             }
                         }
                     }
@@ -65,6 +68,8 @@ export function Transfer() {
 
             }
         }
+        setTransferProgess("Transfer complete")
+        setTimeout(() => {setTransferProgess("")}, 1000)
     }
 
     return (
@@ -92,7 +97,11 @@ export function Transfer() {
                     )
                 }
             </div>
-            <button className="bg-stone-800 text-white font-bold px-6 py-3 rounded-md ml-auto mr-auto block" onClick={transferToOtherPlatform}>Transfer</button>
+            <div className={`${transferProgress ? "flex justify-center align-center" : "hidden"}`}>
+                <CgSpinner className='w-5 h-full animate-spin mr-3'/>
+                <p className="font-md">{transferProgress}</p>
+            </div>
+            <button className={`${transferProgress ? "hidden" : "bg-stone-800 text-white font-bold px-6 py-3 rounded-md ml-auto mr-auto block"}`} onClick={transferToOtherPlatform}>Transfer</button>
         </div>
     );
 }
