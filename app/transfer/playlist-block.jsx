@@ -95,16 +95,14 @@ export function PlaylistBlock({
 					...transferContext, 
 					transfer: "playlists",
 					items: [...transferContext.items, [index, getTracksFunc]],
-					to: [...transferContext.to],
-					updateFunc: editTracksWithPlaylist
+					to: [...transferContext.to]
 				});
 			} else if (clicked == false && transferContext.items != []) {
 				setTransferContext({
 					...transferContext, 
 					transfer: "playlists",
 					items: transferContext.items.filter((elem) => elem[0] != index),
-					to: [...transferContext.to],
-					updateFunc: editTracksWithPlaylist
+					to: [...transferContext.to]
 				});
 			}
 		} else {
@@ -113,16 +111,18 @@ export function PlaylistBlock({
 					...transferContext, 
 					transfer: transferContext.transfer,
 					items: [...transferContext.items],
-					to: [...transferContext.to, [index, index == "Like" ? likedPlaylistData : playlistsData.playlists[index]]],
-					updateFunc: editTracksWithPlaylist
+					to: [...transferContext.to, [
+						index,
+						index == "Like" ? likedPlaylistData : playlistsData.playlists[index],
+						editTracksWithPlaylist
+					]],
 				});
 			} else if (clicked == false && transferContext.items != []) {
 				setTransferContext({
 					...transferContext, 
 					transfer: transferContext.transfer,
 					items: [...transferContext.items],
-					to: transferContext.to.filter((elem) => elem[0] != index),
-					updateFunc: editTracksWithPlaylist
+					to: transferContext.to.filter((elem) => elem[0] != index)
 				});
 			}
 		}
@@ -132,11 +132,9 @@ export function PlaylistBlock({
 		if (playlistsData.playlists[playlistIndex].id in (playlistsData.tracks)) {
 			playlistsData.tracks[playlistsData.playlists[playlistIndex].id].push(playlistItem);
 		}
-		setTrackCount(trackCount + 1);
-		console.log("EDITS", toFromContext.to, playlistsData)
 		if (toFromContext.to == "YouTube") {
-			console.log("added")
 			playlistsData.playlists[playlistIndex].contentDetails.itemCount += 1
+			setTrackCount(playlistsData.playlists[playlistIndex].contentDetails.itemCount);
 		}
 	}
 

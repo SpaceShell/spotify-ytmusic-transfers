@@ -46,6 +46,9 @@ export function Transfer() {
                 const decoder = new TextDecoder();
                 let buffer = '';
 
+                let currentPlaylistTo;
+                let currentToIndex = -1;
+
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
@@ -54,8 +57,6 @@ export function Transfer() {
                     let lines = buffer.split('\n');
                     buffer = lines.pop();
 
-                    let currentPlaylistTo;
-
                     for (const line of lines) {
                         if (line.trim()) {
                             let transferResponse = JSON.parse(line)
@@ -63,9 +64,9 @@ export function Transfer() {
                             console.log('Got video result:', transferResponse);
                             if (transferResponse.playlistIndex != undefined) {
                                 currentPlaylistTo = transferResponse.playlistIndex
-                                console.log("current playlist to", currentPlaylistTo)
+                                currentToIndex += 1
                             } else if (transferResponse.kind == "youtube#playlistItem") {
-                                transferContext.updateFunc(currentPlaylistTo[0], transferResponse)
+                                await transferContext.to[currentToIndex][2](currentPlaylistTo[0], transferResponse)
                                 setTransferProgess(`Transferred ${transferResponse.snippet.title} in playlist ${currentPlaylistTo[1].snippet.title}...`)
                             }
                         }

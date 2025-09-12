@@ -118,12 +118,33 @@ async function youTubeSignIn(reqBody) {
 async function retrieveTracks(reqBody) {
     const cookieStore = await cookies();
 
-    const tracksResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${reqBody.playlistId}`, {
-        headers: {
-            Authorization: `Bearer ${cookieStore.get("access_token").value}`
-        }
+    const tracksResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${reqBody.playlistId}&maxResults=5`, {
+            headers: {
+                Authorization: `Bearer ${cookieStore.get("access_token").value}`
+            }
     });
+
     const tracksData = await tracksResponse.json();
+
+    if ("nextPageToken" in tracksData) {
+        let allTracksRetrieved = false;
+        let allTracksData = tracksData;
+        let currentPage = tracksData;
+
+        while (allTracksRetrieved != true) {
+            const tracksResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${reqBody.playlistId}&maxResults=50&pageToken=${currentPage.nextPageToken}`, {
+                headers: {
+                    Authorization: `Bearer ${cookieStore.get("access_token").value}`
+                }
+            });
+            currentPage = await tracksResponse.json();
+            allTracksData.items.push(...currentPage.items)
+            
+            allTracksRetrieved = !("nextPageToken" in currentPage)
+        }
+
+        return Response.json(allTracksData);
+    }
 
     return Response.json(tracksData);
 }

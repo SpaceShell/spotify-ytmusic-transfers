@@ -95,7 +95,7 @@ export function YouTubeTransfer() {
 			const response = await fetch('/api/youtube', {
 				method: "POST",
 				body: JSON.stringify({ playlistId: playlists[playlistIndex].id, action: "retrieveTracks" }),
-			})
+			});
             
             const jsonTracks = await response.json();
             playlistTrackData.current[playlists[playlistIndex].id] = jsonTracks.items;
@@ -160,7 +160,7 @@ export function YouTubeTransfer() {
                         }
                     </div>
                 :
-                    <div className={`w-172 h-130 grid overflow-y-auto px-4 py-3 grid-cols-1 auto-rows-max gap-1 relative`}>
+                    <div className={`w-172 h-130 grid overflow-y-auto px-4 my-3 pb-2 grid-cols-1 auto-rows-max gap-1 relative`}>
                         <TrackSubHeader></TrackSubHeader>
                         {currentSongs.map((track, index) => (
                         <TrackBlock
