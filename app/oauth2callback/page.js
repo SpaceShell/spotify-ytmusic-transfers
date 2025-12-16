@@ -22,7 +22,7 @@ export default function YouTubeSigningInPage() {
                     if ("error" in jsonPlaylists) {
                         router.push("/?authentication=false");
                     } else {
-                        sessionStorage.setItem("playlists", JSON.stringify(jsonPlaylists));
+                        localStorage.setItem("playlists", JSON.stringify(jsonPlaylists));
                         router.push("/transfer");
                     }
                 });

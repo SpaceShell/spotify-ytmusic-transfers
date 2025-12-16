@@ -62,7 +62,7 @@ export function SpotifyTransfer() {
                 ...transferContext,  
                 transfer: "playlists",
                 items: [...transferContext.items],
-                to: [...transferContext.to, ["create", getTracks]]
+                to: [...transferContext.to, "create"]
             });
 		} else if (createPlaylist == false && transferContext.items != []) {
 			setTransferContext({

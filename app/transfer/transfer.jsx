@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { YouTubeTransfer } from "./youtube-section";
 import { SpotifyTransfer } from "./spotify-section";
 import { ToFromContext, ItemsTransferContext } from './transfer-contexts';
+import { CreatePlaylistPopup } from './create-playlist-popup';
 import { CgSpinner } from "react-icons/cg";
 import { PiArrowFatLinesRightFill } from "react-icons/pi";
 import { EmptyTransfer } from './empty-section';
@@ -15,7 +16,7 @@ export function Transfer() {
     const {} = useSession({
             required: true,
             onUnauthenticated() {
-                if (sessionStorage.getItem("playlists") == undefined) {
+                if (localStorage.getItem("playlists") == undefined || localStorage.getItem("playlists") == null) {
                     router.push('/?authentication=false');
                 }
             }
@@ -23,8 +24,21 @@ export function Transfer() {
     const {toFromContext} = useContext(ToFromContext);
     const {transferContext} = useContext(ItemsTransferContext)
     const [transferProgress, setTransferProgess] = useState("")
+    const [creatingPlaylist, setCreatingPlaylist] = useState(-1)
 
     const transferToOtherPlatform = async () => {
+        if (transferContext.items.length == 0) {
+            return
+        }
+
+        const createIndex = transferContext.to.findIndex(playlist => playlist[0] = 'create');
+        console.log(createIndex, transferContext.to)
+        if (createIndex != -1 && transferContext.to[createIndex].length != 4) {
+            setCreatingPlaylist(createIndex)
+            return
+        }
+        setCreatingPlaylist(-1)
+
         console.log("Transfer Context", transferContext);
         console.log("To From Context", toFromContext);
         setTransferProgess("Transferring, please wait...")
@@ -65,6 +79,9 @@ export function Transfer() {
                             if (transferResponse.playlistIndex != undefined) {
                                 currentPlaylistTo = transferResponse.playlistIndex
                                 currentToIndex += 1
+                            } else if (transferResponse.create == true) {
+                                await transferContext.to[currentToIndex][1](transferResponse.newPlaylist)
+                                transferContext.to[createIndex].pop()
                             } else if (transferResponse.kind == "youtube#playlistItem") {
                                 await transferContext.to[currentToIndex][2](currentPlaylistTo[0], transferResponse)
                                 setTransferProgess(`Transferred ${transferResponse.snippet.title} in playlist ${currentPlaylistTo[1].snippet.title}...`)
@@ -110,6 +127,14 @@ export function Transfer() {
                 <p className="font-md">{transferProgress}</p>
             </div>
             <button className={`${transferProgress ? "hidden" : "bg-stone-800 text-white font-bold px-6 py-3 rounded-md ml-auto mr-auto block"}`} onClick={transferToOtherPlatform}>Transfer</button>
+            {
+                creatingPlaylist != -1 && 
+                <CreatePlaylistPopup 
+                createIndex={creatingPlaylist}
+                transferToOtherPlatform={transferToOtherPlatform}
+                transferContext={transferContext}
+                ></CreatePlaylistPopup>
+            }
         </div>
     );
 }

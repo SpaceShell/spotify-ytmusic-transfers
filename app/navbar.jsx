@@ -27,11 +27,11 @@ export function Navbar() {
 
                 if (session.session == false) {
                     const transferContext = {
-                        from: sessionStorage.getItem("transfer-from"),
-                        to: sessionStorage.getItem("transfer-to")
+                        from: localStorage.getItem("transfer-from"),
+                        to: localStorage.getItem("transfer-to")
                     }
 
-                    sessionStorage.removeItem(
+                    localStorage.removeItem(
                         transferContext.from == "YouTube" ? "transfer-from" : "transfer-to"
                     );
                 }
@@ -42,8 +42,8 @@ export function Navbar() {
         checkSession()
         setToFromContext(
             {
-                from: sessionStorage.getItem("transfer-from"),
-                to: sessionStorage.getItem("transfer-to")
+                from: localStorage.getItem("transfer-from"),
+                to: localStorage.getItem("transfer-to")
             }
         )
     }, [])
@@ -51,23 +51,23 @@ export function Navbar() {
     useEffect(() => {
         setToFromContext(
             {
-                from: sessionStorage.getItem("transfer-from"),
-                to: sessionStorage.getItem("transfer-to")
+                from: localStorage.getItem("transfer-from"),
+                to: localStorage.getItem("transfer-to")
             }
         )
     }, [sessionYouTube, sessionSpotify])
 
     const changeTransferOrder = () => {
-        const toStreamingPlatform = sessionStorage.getItem("transfer-to"); 
-        const fromStreamingPlatform = sessionStorage.getItem("transfer-from"); 
+        const toStreamingPlatform = localStorage.getItem("transfer-to"); 
+        const fromStreamingPlatform = localStorage.getItem("transfer-from"); 
 
-        sessionStorage.setItem("transfer-from", toStreamingPlatform);
-        sessionStorage.setItem("transfer-to", fromStreamingPlatform);
+        localStorage.setItem("transfer-from", toStreamingPlatform);
+        localStorage.setItem("transfer-to", fromStreamingPlatform);
 
         setToFromContext(
             {
-                from: sessionStorage.getItem("transfer-from"),
-                to: sessionStorage.getItem("transfer-to")
+                from: localStorage.getItem("transfer-from"),
+                to: localStorage.getItem("transfer-to")
             }
         )
         setTransferContext(

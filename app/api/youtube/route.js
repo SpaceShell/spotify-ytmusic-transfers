@@ -38,7 +38,7 @@ export async function GET() {
     const baseUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
     const params = {
         'client_id': clientId,
-        'redirect_uri': 'http://localhost:3000/oauth2callback',
+        'redirect_uri': 'http://127.0.0.1:3000/oauth2callback',
         'response_type': 'code',
         'code_challenge': pkceChallenge,
         'code_challenge_method': 'S256',
@@ -85,7 +85,7 @@ async function youTubeSignIn(reqBody) {
         code: reqBody.code,
         code_verifier: cookieStore.get('verifier').value,
         grant_type: "authorization_code",
-        redirect_uri: "http://localhost:3000/oauth2callback"
+        redirect_uri: "http://127.0.0.1:3000/oauth2callback"
     });
     
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
@@ -111,6 +111,26 @@ async function youTubeSignIn(reqBody) {
         sameSite: 'lax',
         maxAge: tokenData.expires_in
     });
+
+    if ("nextPageToken" in playlistData) {
+        let allPlaylistsRetrieved = false;
+        let allPlaylistsData = playlistData;
+        let currentPage = playlistData;
+
+        while (allPlaylistsRetrieved != true) {
+            const playlistResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&mine=true&maxResults=50&pageToken=${currentPage.nextPageToken}`, {
+                headers: {
+                    Authorization: `Bearer ${tokenData.access_token}`
+                }
+            });
+            currentPage = await playlistResponse.json();
+            allPlaylistsData.items.push(...currentPage.items)
+            
+            allPlaylistsRetrieved = !("nextPageToken" in currentPage)
+        }
+
+        return Response.json(allPlaylistsData);
+    }
 
     return Response.json(playlistData);
 }
@@ -185,7 +205,45 @@ async function addTracks(transfer) {
                 );
 
                 for (const playlist of transfer.toPlaylists) {
-                    const transferResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet`, {
+                    if (playlist[0] == "create") {
+                        const createResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails`, {
+                            method: 'POST',
+                            headers: {
+                                Authorization: `Bearer ${cookieStore.get("access_token").value}`
+                            },
+                            body: JSON.stringify({
+                                "kind": "youtube#playlist",
+                                "snippet": {
+                                    "title": playlist[3],
+                                    }
+                            })
+                        });
+                        const createData = await createResponse.json();
+
+                        playlist[1] = createData
+                        controller.enqueue(
+                            new TextEncoder().encode(
+                                JSON.stringify({playlistIndex: playlist}) + '\n'
+                            )
+                        );
+
+                        controller.enqueue(
+                            new TextEncoder().encode(
+                                JSON.stringify({
+                                    newPlaylist: createData,
+                                    create: true
+                                }) + '\n'
+                            )
+                        );
+                    } else {
+                        controller.enqueue(
+                            new TextEncoder().encode(
+                                JSON.stringify({playlistIndex: playlist}) + '\n'
+                            )
+                        );
+                    }
+
+                    const transferResponse = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails`, {
                         method: 'POST',
                         headers: {
                             Authorization: `Bearer ${cookieStore.get("access_token").value}`
@@ -203,7 +261,6 @@ async function addTracks(transfer) {
                     const transferData = await transferResponse.json();
                     controller.enqueue(
                         new TextEncoder().encode(
-                            JSON.stringify({playlistIndex: playlist}) + '\n' +
                             JSON.stringify(transferData) + '\n'
                         )
                     );

@@ -10,12 +10,15 @@ export function SpotifyLoginButton() {
 
     let login = () => {
         if (sessionSpotify) {
+            if (localStorage.getItem("transfer-from") != "Spotify" && localStorage.getItem("transfer-to") != "Spotify") {
+                localStorage.setItem("transfer-from", "Spotify")
+            }
             router.push('/transfer')
         } else {
-            if (sessionStorage.getItem("transfer-to") != "Spotify" && sessionStorage.getItem("transfer-from") == null) {
-                sessionStorage.setItem("transfer-from", "Spotify")
-            } else if (sessionStorage.getItem("transfer-from") != "Spotify" && sessionStorage.getItem("transfer-to") == null) {
-                sessionStorage.setItem("transfer-to", "Spotify")
+            if (localStorage.getItem("transfer-to") != "Spotify" && localStorage.getItem("transfer-from") == null) {
+                localStorage.setItem("transfer-from", "Spotify")
+            } else if (localStorage.getItem("transfer-from") != "Spotify" && localStorage.getItem("transfer-to") == null) {
+                localStorage.setItem("transfer-to", "Spotify")
             }
             signIn("spotify", { callbackUrl: '/transfer' })
         }

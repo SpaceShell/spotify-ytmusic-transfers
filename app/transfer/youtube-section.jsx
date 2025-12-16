@@ -33,13 +33,13 @@ export function YouTubeTransfer() {
                 const session = await response.json()
 
                 if (session.session == true) {
-                    const playlistInfo = JSON.parse(sessionStorage.getItem("playlists"));
+                    const playlistInfo = JSON.parse(localStorage.getItem("playlists"));
 
                     if (playlistInfo) {
                         setPlaylists(playlistInfo.items);
                     }
                 } else {
-                    sessionStorage.removeItem("playlists");
+                    localStorage.removeItem("playlists");
                     setPlaylists([]);
                 }
             });
@@ -58,14 +58,14 @@ export function YouTubeTransfer() {
                 ...transferContext, 
                 transfer: "playlists",
                 items: [...transferContext.items],
-                to: [...transferContext.to, "create"]
+                to: [...transferContext.to, ["create", addNewPlaylist, editTracksWithNewPlaylist]]
             });
 		} else if (createPlaylist == false && transferContext.items != []) {
 			setTransferContext({
                 ...transferContext, 
                 transfer: "playlists",
                 items: [...transferContext.items],
-                to: transferContext.to.filter((elem) => elem != "create")
+                to: transferContext.to.filter((elem) => elem[0] != "create")
             });
 		}
 	}, [createPlaylist])
@@ -103,6 +103,28 @@ export function YouTubeTransfer() {
 		}
 	}
 
+    const addNewPlaylist = async (newPlaylist) => {
+        const newPlaylists = playlists.slice()
+        newPlaylists.push(newPlaylist)
+        console.log("NEW PLAYLISt", newPlaylist, newPlaylists)
+        setPlaylists(newPlaylists)
+    }
+
+    const editTracksWithNewPlaylist = async (_, playlistItem) => {
+        const newPlaylistID = playlists[playlists.length - 1].id
+
+        if (!(newPlaylistID in playlistTrackData.current)) {
+            playlistTrackData.current[playlists[playlists.length - 1].id] = [playlistItem]
+        } else {
+		    playlistTrackData.current[playlists[playlists.length - 1].id].push(playlistItem);
+        }
+
+		if (toFromContext.to == "YouTube") {
+            console.log("adding 1 to", playlists[playlists.length - 1], playlists)
+			playlists[playlists.length - 1].contentDetails.itemCount += 1
+		}
+	}
+
     return (
         <section>
             <PlatformHeader
@@ -122,7 +144,14 @@ export function YouTubeTransfer() {
                             getTracksFunc={getTracks}
                             key={index}
                             platform={"YouTube"}
-                            playlistImage={playlist.snippet.thumbnails ? playlist.snippet.thumbnails.standard.url : "/EmptyPlaylist.png"}
+                            playlistImage={
+                                playlist.snippet.thumbnails ? 
+                                    playlist.snippet.thumbnails.standard ?
+                                    playlist.snippet.thumbnails.standard.url 
+                                    :
+                                    playlist.snippet.thumbnails.high.url 
+                                :
+                                "/EmptyPlaylist.png"}
                             playlistName={playlist.snippet.title}
                             playlistOwner={playlist.snippet.channelTitle}
                             playlistTrackCount={playlist.contentDetails.itemCount}

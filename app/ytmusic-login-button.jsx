@@ -11,10 +11,16 @@ export function YTMusicLoginButton() {
             method: "GET",
         }).then(async (response) => {
             const json = await response.json()
-            if (sessionStorage.getItem("transfer-to") != "YouTube" && sessionStorage.getItem("transfer-from") != undefined) {
-                sessionStorage.setItem("transfer-from", "YouTube")
-            } else if (sessionStorage.getItem("transfer-from") != "YouTube" && sessionStorage.getItem("transfer-to") != undefined) {
-                sessionStorage.setItem("transfer-to", "YouTube")
+            if (
+                localStorage.getItem("transfer-to") != "YouTube"
+                && localStorage.getItem("transfer-from") == null
+            ) {
+                localStorage.setItem("transfer-from", "YouTube")
+            } else if (
+                localStorage.getItem("transfer-from") != "YouTube"
+                && localStorage.getItem("transfer-to") == null
+            ) {
+                localStorage.setItem("transfer-to", "YouTube")
             }
             router.push(json.url);
         });

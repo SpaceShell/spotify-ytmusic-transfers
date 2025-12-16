@@ -128,6 +128,17 @@ export function PlaylistBlock({
 		}
 	}, [clicked])
 
+	const currentPlaylist = playlistsData.playlists[index];
+	const itemCount = currentPlaylist?.contentDetails?.itemCount;
+
+	useEffect(() => {
+		if (platform == "YouTube" && loaded && itemCount != trackCount) {
+			console.log("changed", playlistsData.playlists[index], trackCount)
+			setTrackCount(playlistsData.playlists[index].contentDetails.itemCount);
+			console.log("effect", platform, itemCount)
+		}
+	}, [itemCount])
+
     const editTracksWithPlaylist = async (playlistIndex, playlistItem) => {
 		if (playlistsData.playlists[playlistIndex].id in (playlistsData.tracks)) {
 			playlistsData.tracks[playlistsData.playlists[playlistIndex].id].push(playlistItem);

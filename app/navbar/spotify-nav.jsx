@@ -42,7 +42,7 @@ export function SpotifyOptionsNavbar({transferDirection}) {
                 <button 
                     className="w-35 py-3 pl-5 pr-6 top-12 right-0 absolute rounded-xl outline-2 outline-neutral-200 flex justify-between items-center bg-white hover:bg-neutral-100 cursor-pointer"
                     onClick={() => {
-                        sessionStorage.removeItem("transfer-" + transferDirection);
+                        localStorage.removeItem("transfer-" + transferDirection);
                         signOut({ callbackUrl: '/' })
                     }}
                     ref={signOutSpotify}
