@@ -85,6 +85,7 @@ export function PlaylistBlock({
 	}, [])
 
 	useEffect(() => {
+		console.log(transferContext)
 		if (transferContext.transfer != "playlists") {
 			transferContext.items = [];
 		}

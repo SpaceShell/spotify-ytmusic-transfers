@@ -22,16 +22,16 @@ export function Transfer() {
             }
     });
     const {toFromContext} = useContext(ToFromContext);
-    const {transferContext} = useContext(ItemsTransferContext)
-    const [transferProgress, setTransferProgess] = useState("")
-    const [creatingPlaylist, setCreatingPlaylist] = useState(-1)
+    const {transferContext} = useContext(ItemsTransferContext);
+    const [transferProgress, setTransferProgess] = useState("");
+    const [creatingPlaylist, setCreatingPlaylist] = useState(-1);
 
     const transferToOtherPlatform = async () => {
         if (transferContext.items.length == 0) {
             return
         }
 
-        const createIndex = transferContext.to.findIndex(playlist => playlist[0] = 'create');
+        const createIndex = transferContext.to.findIndex(playlist => playlist[0] == 'create');
         console.log(createIndex, transferContext.to)
         if (createIndex != -1 && transferContext.to[createIndex].length != 4) {
             setCreatingPlaylist(createIndex)
@@ -128,11 +128,12 @@ export function Transfer() {
             </div>
             <button className={`${transferProgress ? "hidden" : "bg-stone-800 text-white font-bold px-6 py-3 rounded-md ml-auto mr-auto block"}`} onClick={transferToOtherPlatform}>Transfer</button>
             {
-                creatingPlaylist != -1 && 
+                creatingPlaylist > -1 && 
                 <CreatePlaylistPopup 
                 createIndex={creatingPlaylist}
                 transferToOtherPlatform={transferToOtherPlatform}
                 transferContext={transferContext}
+                setCreatingPlaylist={setCreatingPlaylist}
                 ></CreatePlaylistPopup>
             }
         </div>

@@ -52,6 +52,8 @@ export function YouTubeTransfer() {
 		if (transferContext.transfer != "playlists") {
 			transferContext.items = [];
 		}
+
+        console.log(transferContext)
 		
 		if (createPlaylist == true) {
 			setTransferContext({
