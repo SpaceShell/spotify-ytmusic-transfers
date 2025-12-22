@@ -15,7 +15,7 @@ export function YouTubeTransfer() {
     const [musicLayout, setMusicLayout] = useState("grid");
     const [view, setView] = useState(null);
     const [currentSongs, setSongs] = useState([]);
-    const [createPlaylist, setCreatePlaylist] = useState(false)
+    const [createPlaylist, setCreatePlaylist] = useState(false);
 
     let playlistLoadData = useRef({});
     let playlistTrackData = useRef({});
@@ -52,8 +52,6 @@ export function YouTubeTransfer() {
 		if (transferContext.transfer != "playlists") {
 			transferContext.items = [];
 		}
-
-        console.log(transferContext)
 		
 		if (createPlaylist == true) {
 			setTransferContext({
@@ -106,24 +104,29 @@ export function YouTubeTransfer() {
 	}
 
     const addNewPlaylist = async (newPlaylist) => {
-        const newPlaylists = playlists.slice()
-        newPlaylists.push(newPlaylist)
-        console.log("NEW PLAYLISt", newPlaylist, newPlaylists)
-        setPlaylists(newPlaylists)
+        const newPlaylists = playlists.slice();
+        newPlaylists.push(newPlaylist);
+        console.log("NEW PLAYLIST ADDED AND NEW TOTAL PLAYLISTS", newPlaylist, newPlaylists);
+        setPlaylists(newPlaylists);
+        localStorage.setItem("playlists", JSON.stringify(newPlaylists));
+        return newPlaylists;
     }
 
-    const editTracksWithNewPlaylist = async (_, playlistItem) => {
-        const newPlaylistID = playlists[playlists.length - 1].id
+    const editTracksWithNewPlaylist = async (playlists, playlistItem) => {
+        const newPlaylistID = playlists[playlists.length - 1].id;
 
         if (!(newPlaylistID in playlistTrackData.current)) {
-            playlistTrackData.current[playlists[playlists.length - 1].id] = [playlistItem]
+            playlistTrackData.current[playlists[playlists.length - 1].id] = [playlistItem];
         } else {
 		    playlistTrackData.current[playlists[playlists.length - 1].id].push(playlistItem);
         }
 
 		if (toFromContext.to == "YouTube") {
-            console.log("adding 1 to", playlists[playlists.length - 1], playlists)
-			playlists[playlists.length - 1].contentDetails.itemCount += 1
+            console.log("adding 1 to", playlists)
+			playlists[playlists.length - 1].contentDetails.itemCount += 1;
+
+            //Update +1 for each item added to new playlist
+            //setPlaylists(playlists);
 		}
 	}
 

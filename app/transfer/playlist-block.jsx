@@ -23,9 +23,9 @@ export function PlaylistBlock({
 	const [playlistButtonClass, setPlaylistButtonClass] = useState("");
 	const [clicked, setClicked] = useState(false);
 	const [loaded, setLoaded] = useState(false);
-	const [trackCount, setTrackCount] = useState(playlistTrackCount)
+	const [trackCount, setTrackCount] = useState(playlistTrackCount);
 
-	const {transferContext, setTransferContext} = useContext(ItemsTransferContext)
+	const {transferContext, setTransferContext} = useContext(ItemsTransferContext);
 	const {toFromContext} = useContext(ToFromContext);
 
 	useEffect(() => {
@@ -85,7 +85,6 @@ export function PlaylistBlock({
 	}, [])
 
 	useEffect(() => {
-		console.log(transferContext)
 		if (transferContext.transfer != "playlists") {
 			transferContext.items = [];
 		}
@@ -134,9 +133,9 @@ export function PlaylistBlock({
 
 	useEffect(() => {
 		if (platform == "YouTube" && loaded && itemCount != trackCount) {
-			console.log("changed", playlistsData.playlists[index], trackCount)
+			console.log("changed", playlistsData.playlists[index], trackCount);
 			setTrackCount(playlistsData.playlists[index].contentDetails.itemCount);
-			console.log("effect", platform, itemCount)
+			console.log("effect", platform, itemCount);
 		}
 	}, [itemCount])
 
@@ -145,7 +144,7 @@ export function PlaylistBlock({
 			playlistsData.tracks[playlistsData.playlists[playlistIndex].id].push(playlistItem);
 		}
 		if (toFromContext.to == "YouTube") {
-			playlistsData.playlists[playlistIndex].contentDetails.itemCount += 1
+			playlistsData.playlists[playlistIndex].contentDetails.itemCount += 1;
 			setTrackCount(playlistsData.playlists[playlistIndex].contentDetails.itemCount);
 		}
 	}

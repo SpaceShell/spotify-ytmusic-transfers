@@ -1,12 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 
 export function CreatePlaylistPopup({createIndex, transferToOtherPlatform, transferContext, setCreatingPlaylist}) {
     const createPlaylist = (formData) => {
-        console.log(transferContext)
-        transferContext.to[createIndex]= [...transferContext.to[createIndex], formData.get("title")];
+        transferContext.to[createIndex] = [...transferContext.to[createIndex], formData.get("title")];
         transferToOtherPlatform();
     }
 

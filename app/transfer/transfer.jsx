@@ -28,16 +28,16 @@ export function Transfer() {
 
     const transferToOtherPlatform = async () => {
         if (transferContext.items.length == 0) {
-            return
+            return;
         }
 
         const createIndex = transferContext.to.findIndex(playlist => playlist[0] == 'create');
-        console.log(createIndex, transferContext.to)
+        console.log("Create index and to", createIndex, transferContext.to)
         if (createIndex != -1 && transferContext.to[createIndex].length != 4) {
-            setCreatingPlaylist(createIndex)
-            return
+            setCreatingPlaylist(createIndex);
+            return;
         }
-        setCreatingPlaylist(-1)
+        setCreatingPlaylist(-1);
 
         console.log("Transfer Context", transferContext);
         console.log("To From Context", toFromContext);
@@ -48,7 +48,7 @@ export function Transfer() {
             const getTracksFuncFrom = itemFrom[1];
             const tracksListFrom = await getTracksFuncFrom(indexFrom);
             
-            console.log(tracksListFrom, transferContext.to)
+            console.log("FROM AND TC.to", tracksListFrom, transferContext.to)
 
             if (toFromContext.to == "YouTube") {
                 const updates = await fetch('/api/youtube', {
@@ -75,16 +75,29 @@ export function Transfer() {
                         if (line.trim()) {
                             let transferResponse = JSON.parse(line)
                             
-                            console.log('Got video result:', transferResponse);
+                            console.log('Transfer response:', transferResponse);
                             if (transferResponse.playlistIndex != undefined) {
-                                currentPlaylistTo = transferResponse.playlistIndex
-                                currentToIndex += 1
+                                currentPlaylistTo = transferResponse.playlistIndex;
+                                currentToIndex += 1;
                             } else if (transferResponse.create == true) {
-                                await transferContext.to[currentToIndex][1](transferResponse.newPlaylist)
-                                transferContext.to[createIndex].pop()
+                                transferContext.to[currentToIndex].push(
+                                    await transferContext.to[currentToIndex][1](transferResponse.newPlaylist)
+                                );
+                                console.log("TRANSFER CONTEXT:", transferContext)
                             } else if (transferResponse.kind == "youtube#playlistItem") {
-                                await transferContext.to[currentToIndex][2](currentPlaylistTo[0], transferResponse)
-                                setTransferProgess(`Transferred ${transferResponse.snippet.title} in playlist ${currentPlaylistTo[1].snippet.title}...`)
+                                if (transferContext.to[currentToIndex][0] == "create") {
+                                    await transferContext.to[currentToIndex][2](
+                                        transferContext.to[currentToIndex][4],
+                                        transferResponse
+                                    );
+                                } else {
+                                    await transferContext.to[currentToIndex][2](
+                                        currentPlaylistTo[0], 
+                                        transferResponse
+                                    );
+                                }
+                
+                                setTransferProgess(`Transferred ${transferResponse.snippet.title} in playlist ${currentPlaylistTo[1].snippet.title}...`);
                             }
                         }
                     }
