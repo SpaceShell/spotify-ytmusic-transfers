@@ -17,7 +17,7 @@ export function PlaylistBlock({
 	playlistTrackCount,
 	playlistsData,
 	view,
-	viewTracksFunc
+	viewTracksFunc,
 }) {
 	const [mainColorBackground, setMainColorBackground] = useState("rgb(65, 65, 65)");
 	const [playlistButtonClass, setPlaylistButtonClass] = useState("");
@@ -137,7 +137,7 @@ export function PlaylistBlock({
 			setTrackCount(playlistsData.playlists[index].contentDetails.itemCount);
 			console.log("effect", platform, itemCount);
 		}
-	}, [itemCount])
+	}, [itemCount, trackCount, loaded, playlistsData])
 
     const editTracksWithPlaylist = async (playlistIndex, playlistItem) => {
 		if (playlistsData.playlists[playlistIndex].id in (playlistsData.tracks)) {

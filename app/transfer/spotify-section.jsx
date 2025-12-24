@@ -21,7 +21,7 @@ export function SpotifyTransfer() {
     const [musicLayout, setMusicLayout] = useState("grid");
     const [view, setView] = useState(null);
     const [currentSongs, setSongs] = useState([]);
-    const [createPlaylist, setCreatePlaylist] = useState(false)
+    const [createPlaylist, setCreatePlaylist] = useState(false);
 
     const router = useRouter();
 

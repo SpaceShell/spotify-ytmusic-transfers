@@ -106,8 +106,13 @@ export function Transfer() {
 
             }
         }
-        setTransferProgess("Transfer complete")
-        setTimeout(() => {setTransferProgess("")}, 1500)
+        for (let i = 0; i < 4; i++) {
+            //Reset create 
+            transferContext.to[createIndex].pop();
+        }
+        
+        setTransferProgess("Transfer complete");
+        setTimeout(() => {setTransferProgess("")}, 1500);
     }
 
     return (

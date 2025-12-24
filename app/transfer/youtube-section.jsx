@@ -19,10 +19,10 @@ export function YouTubeTransfer() {
 
     let playlistLoadData = useRef({});
     let playlistTrackData = useRef({});
-    let scrollSection = useRef()
+    let scrollSection = useRef();
 
     const {toFromContext} = useContext(ToFromContext);
-    const {transferContext, setTransferContext} = useContext(ItemsTransferContext)
+    const {transferContext, setTransferContext} = useContext(ItemsTransferContext);
 
     useEffect(() => {
         const checkSession = async () => {
@@ -34,9 +34,9 @@ export function YouTubeTransfer() {
 
                 if (session.session == true) {
                     const playlistInfo = JSON.parse(localStorage.getItem("playlists"));
-
+                    console.log("retrieved playlistInfo On YT Load", playlistInfo)
                     if (playlistInfo) {
-                        setPlaylists(playlistInfo.items);
+                        setPlaylists(playlistInfo);
                     }
                 } else {
                     localStorage.removeItem("playlists");
@@ -109,6 +109,9 @@ export function YouTubeTransfer() {
         console.log("NEW PLAYLIST ADDED AND NEW TOTAL PLAYLISTS", newPlaylist, newPlaylists);
         setPlaylists(newPlaylists);
         localStorage.setItem("playlists", JSON.stringify(newPlaylists));
+
+        
+        // console.log("newest playlist edit tracks func: ", newTrackEditFunc)
         return newPlaylists;
     }
 
@@ -122,11 +125,10 @@ export function YouTubeTransfer() {
         }
 
 		if (toFromContext.to == "YouTube") {
-            console.log("adding 1 to", playlists)
+            console.log("adding 1 to", playlists);
 			playlists[playlists.length - 1].contentDetails.itemCount += 1;
-
-            //Update +1 for each item added to new playlist
-            //setPlaylists(playlists);
+            setPlaylists(playlists);
+            localStorage.setItem("playlists", JSON.stringify(playlists));
 		}
 	}
 
@@ -143,7 +145,7 @@ export function YouTubeTransfer() {
             {
                 view == null ?
                     <div className={`w-172 h-130 grid overflow-y-auto px-4 py-3 auto-rows-min ${musicLayout == "grid" ? "grid-cols-2 gap-8" : "grid-cols-1 gap-1"}`} ref={scrollSection}>
-                        {playlists.map((playlist, index) => (
+                        {playlists && playlists.map((playlist, index) => (
                         <PlaylistBlock
                             index={index}
                             getTracksFunc={getTracks}
