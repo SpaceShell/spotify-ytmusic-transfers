@@ -24,7 +24,7 @@ export async function GET() {
     }
 
     const pkceVerifier = generateCodeVerifier();
-    const cookieStore = await cookies()
+    const cookieStore = await cookies();
     cookieStore.set('verifier', pkceVerifier, {
         httpOnly: true,
         secure: true,
@@ -59,25 +59,26 @@ export async function POST(req) {
     if (reqBody.action === "signIn") {
         return await youTubeSignIn(reqBody);
     } else if (reqBody.action == "retrieveTracks") {
-        return await retrieveTracks(reqBody)
+        return await retrieveTracks(reqBody);
     } else if (reqBody.action == "signOut") {
-        return await youtubeSignOut()
+        return await youtubeSignOut();
     } else if (reqBody.action == "checkSession") {
-        const cookieStore = await cookies()
+        const cookieStore = await cookies();
 
         if (cookieStore.get("access_token") == undefined) {
-            return Response.json({session: false})
+            return Response.json({session: false});
         }
         return Response.json({session: true})
     } else if (reqBody.action == "transferTracks") {
-        return await addTracks({tracks: reqBody.tracks, toPlaylists: reqBody.toPlaylists})
+        return await addTracks({tracks: reqBody.tracks, toPlaylists: reqBody.toPlaylists});
     }
     return new Response("Invalid action given", { status: 400 });
 }
 
 
 async function youTubeSignIn(reqBody) {
-    const cookieStore = await cookies()
+    const cookieStore = await cookies();
+    console.log(cookieStore)
 
     const body = new URLSearchParams({
         client_id: clientId,
@@ -104,6 +105,8 @@ async function youTubeSignIn(reqBody) {
     });
     const playlistData = await playlistResponse.json();
 
+    console.log("TOKEN DATA: ", tokenData)
+
     cookieStore.set('access_token', tokenData.access_token, {
         httpOnly: true,
         secure: true,
@@ -124,9 +127,9 @@ async function youTubeSignIn(reqBody) {
                 }
             });
             currentPage = await playlistResponse.json();
-            allPlaylistsData.items.push(...currentPage.items)
+            allPlaylistsData.items.push(...currentPage.items);
             
-            allPlaylistsRetrieved = !("nextPageToken" in currentPage)
+            allPlaylistsRetrieved = !("nextPageToken" in currentPage);
         }
 
         return Response.json(allPlaylistsData);

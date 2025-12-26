@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react"
 import { useEffect, useState, useContext } from "react";
+import { useRouter } from "next/navigation";
 import { MdOutlineDarkMode } from "react-icons/md";
 import { FaArrowRightArrowLeft } from "react-icons/fa6";
 import { SignInNavbar } from "./navbar/sign-in-nav";
@@ -12,34 +13,56 @@ import { SpotifyOptionsNavbar } from "./navbar/spotify-nav";
 import { ToFromContext, ItemsTransferContext } from "./transfer/transfer-contexts";
 
 export function Navbar() {
-    const { data: sessionSpotify } = useSession()
-    const [sessionYouTube, setSessionYouTube] = useState(false)
-    const {toFromContext, setToFromContext} = useContext(ToFromContext)
-    const {setTransferContext} = useContext(ItemsTransferContext)
+    const { data: sessionSpotify } = useSession();
+    const [sessionYouTube, setSessionYouTube] = useState(false);
+    const {toFromContext, setToFromContext} = useContext(ToFromContext);
+    const {setTransferContext} = useContext(ItemsTransferContext);
+    const router = useRouter();
 
     useEffect(() => {
-        const checkSession = async () => {
+        const checkYouTubeSession = async () => {
             await fetch('/api/youtube', {
                 method: "POST",
                 body: JSON.stringify({ action: "checkSession" }),
             }).then(async (response) => {
-                const session = await response.json()
+                const session = await response.json();
 
-                if (session.session == false) {
-                    const transferContext = {
-                        from: localStorage.getItem("transfer-from"),
-                        to: localStorage.getItem("transfer-to")
-                    }
+                // if (session.session == false) {
+                //     const transferContext = {
+                //         from: localStorage.getItem("transfer-from"),
+                //         to: localStorage.getItem("transfer-to")
+                //     }
 
-                    localStorage.removeItem(
-                        transferContext.from == "YouTube" ? "transfer-from" : "transfer-to"
-                    );
-                }
-                setSessionYouTube(session.session)
+                //     // localStorage.removeItem(
+                //     //     transferContext.from == "YouTube" ? "transfer-from" : "transfer-to"
+                //     // );
+                // }
+                setSessionYouTube(session.session);
+
+                //See if you can refresh when access token expires
+                if (session.session == false && (localStorage.getItem("transfer-from") == "YouTube" || localStorage.getItem("transfer-to") == "YouTube")) {
+                    console.log("LOCAL,", localStorage)
+                    await fetch('/api/youtube', {
+                        method: "GET",
+                    }).then(async (response) => {
+                        const json = await response.json();
+                        console.log("GET RESPONSE IN NAVBAR", json)
+        
+                        router.push(json.url);
+                    });
+                } 
+                // else if (session.session == true) {
+                //     if (localStorage.getItem("transfer-from") != "YouTube") {
+                //         if (localStorage.getItem("transfer-to") != "YouTube") {
+
+                //         }
+                //     }
+                // }
+                console.log("SESSION YT", session)
             });
         }
 
-        checkSession()
+        checkYouTubeSession();
         setToFromContext(
             {
                 from: localStorage.getItem("transfer-from"),

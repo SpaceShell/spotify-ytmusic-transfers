@@ -19,7 +19,7 @@ export function YoutubeOptionsNavbar({setSessionYouTube, transferDirection}) {
             });
         } catch {
             setSessionYouTube(false);
-            localStorage.removeItem("transfer-" + transferDirection);
+            // localStorage.removeItem("transfer-" + transferDirection);
             router.push("/");
         }
     }

@@ -25,7 +25,7 @@ export function YouTubeTransfer() {
     const {transferContext, setTransferContext} = useContext(ItemsTransferContext);
 
     useEffect(() => {
-        const checkSession = async () => {
+        const checkYouTubeSession = async () => {
             await fetch('/api/youtube', {
                 method: "POST",
                 body: JSON.stringify({ action: "checkSession" }),
@@ -34,7 +34,7 @@ export function YouTubeTransfer() {
 
                 if (session.session == true) {
                     const playlistInfo = JSON.parse(localStorage.getItem("playlists"));
-                    console.log("retrieved playlistInfo On YT Load", playlistInfo)
+                    console.log("retrieved playlistInfo On YT Load", playlistInfo);
                     if (playlistInfo) {
                         setPlaylists(playlistInfo);
                     }
@@ -45,7 +45,7 @@ export function YouTubeTransfer() {
             });
         }
 
-        checkSession()
+        checkYouTubeSession()
     }, [])
 
     useEffect(() => {
