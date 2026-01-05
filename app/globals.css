@@ -4,6 +4,15 @@
     --font-inter: "Inter", "sans-serif"; 
 }
 
+@layer components {
+  .loginButton {
+    @apply w-50 h-20 px-5 py-3 bg-white transition duration-200 outline-3 outline-transparent outline-offset-2 hover:outline-white rounded-full font-bold flex items-center cursor-pointer;
+  }
+  .engagingH2 {
+    @apply bg-linear-to-r from-[#102672] to-[#9C9EFF] bg-clip-text text-transparent font-extrabold text-4xl font-inter;
+  }
+}
+
 .fade-up {
     animation: fade-up 3s ease 0s 1;
     position: absolute;

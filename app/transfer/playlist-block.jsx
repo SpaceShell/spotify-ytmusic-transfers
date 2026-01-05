@@ -126,6 +126,7 @@ export function PlaylistBlock({
 				});
 			}
 		}
+		console.log(transferContext)
 	}, [clicked])
 
 	const currentPlaylist = playlistsData.playlists[index];
@@ -135,7 +136,6 @@ export function PlaylistBlock({
 		if (platform == "YouTube" && loaded && itemCount != trackCount) {
 			console.log("changed", playlistsData.playlists[index], trackCount);
 			setTrackCount(playlistsData.playlists[index].contentDetails.itemCount);
-			console.log("effect", platform, itemCount);
 		}
 	}, [itemCount, trackCount, loaded, playlistsData])
 

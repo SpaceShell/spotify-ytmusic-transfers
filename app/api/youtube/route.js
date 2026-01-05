@@ -78,7 +78,6 @@ export async function POST(req) {
 
 async function youTubeSignIn(reqBody) {
     const cookieStore = await cookies();
-    console.log(cookieStore)
 
     const body = new URLSearchParams({
         client_id: clientId,
@@ -104,8 +103,6 @@ async function youTubeSignIn(reqBody) {
         }
     });
     const playlistData = await playlistResponse.json();
-
-    console.log("TOKEN DATA: ", tokenData)
 
     cookieStore.set('access_token', tokenData.access_token, {
         httpOnly: true,

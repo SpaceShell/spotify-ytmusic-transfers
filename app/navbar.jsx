@@ -12,7 +12,7 @@ import { YoutubeOptionsNavbar } from "./navbar/youtube-nav";
 import { SpotifyOptionsNavbar } from "./navbar/spotify-nav";
 import { ToFromContext, ItemsTransferContext } from "./transfer/transfer-contexts";
 
-export function Navbar() {
+export function Navbar({isHome=false}) {
     const { data: sessionSpotify } = useSession();
     const [sessionYouTube, setSessionYouTube] = useState(false);
     const {toFromContext, setToFromContext} = useContext(ToFromContext);
@@ -40,25 +40,18 @@ export function Navbar() {
                 setSessionYouTube(session.session);
 
                 //See if you can refresh when access token expires
-                if (session.session == false && (localStorage.getItem("transfer-from") == "YouTube" || localStorage.getItem("transfer-to") == "YouTube")) {
-                    console.log("LOCAL,", localStorage)
+                if (
+                    session.session == false &&
+                    window.location.pathname == "/transfer" &&
+                    (localStorage.getItem("transfer-from") == "YouTube" || localStorage.getItem("transfer-to") == "YouTube")) {
                     await fetch('/api/youtube', {
                         method: "GET",
                     }).then(async (response) => {
                         const json = await response.json();
-                        console.log("GET RESPONSE IN NAVBAR", json)
         
                         router.push(json.url);
                     });
                 } 
-                // else if (session.session == true) {
-                //     if (localStorage.getItem("transfer-from") != "YouTube") {
-                //         if (localStorage.getItem("transfer-to") != "YouTube") {
-
-                //         }
-                //     }
-                // }
-                console.log("SESSION YT", session)
             });
         }
 
@@ -105,10 +98,10 @@ export function Navbar() {
     }
 
     return (
-        <nav className="flex justify-between items-center py-5 px-10">
+        <nav className="flex justify-between items-center py-5 px-10 z-2 relative">
             <div>
                 <Link href={"/"}>
-                    <Image src="/MusiMoveFullLogo.png" height={50} width={200} alt="MusiMove Logo" unoptimized={true} priority={false}></Image>
+                    <Image src="/logos/MusiMoveFullLogo_Dark.png" height={50} width={200} alt="MusiMove Logo" unoptimized={true} priority={false}></Image>
                 </Link>
             </div>
             <div className="flex gap-5 items-center">
@@ -127,7 +120,7 @@ export function Navbar() {
                             ></SignInNavbar>
                     )
                 }
-                <FaArrowRightArrowLeft className="w-7 h-7 cursor-pointer" onClick={changeTransferOrder}/>
+                <FaArrowRightArrowLeft className={`${isHome && "fill-white"} w-7 h-7 cursor-pointer`} onClick={changeTransferOrder}/>
                 {
                     sessionSpotify && toFromContext.to == "Spotify" ?
                     <SpotifyOptionsNavbar transferDirection={"to"}></SpotifyOptionsNavbar>
@@ -144,7 +137,7 @@ export function Navbar() {
                     )
                 }
                 <div className="h-12 w-[0.1rem] bg-neutral-300 rounded-xl"></div>
-                <MdOutlineDarkMode className="w-10 h-10 cursor-pointer"/>
+                <MdOutlineDarkMode className={`${isHome && "fill-white"} w-10 h-10 cursor-pointer`}/>
             </div>
         </nav>
     )

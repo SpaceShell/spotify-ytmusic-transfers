@@ -110,8 +110,6 @@ export function YouTubeTransfer() {
         setPlaylists(newPlaylists);
         localStorage.setItem("playlists", JSON.stringify(newPlaylists));
 
-        
-        // console.log("newest playlist edit tracks func: ", newTrackEditFunc)
         return newPlaylists;
     }
 

@@ -32,23 +32,18 @@ export function Transfer() {
         }
 
         const createIndex = transferContext.to.findIndex(playlist => playlist[0] == 'create');
-        console.log("Create index and to", createIndex, transferContext.to)
         if (createIndex != -1 && transferContext.to[createIndex].length != 4) {
             setCreatingPlaylist(createIndex);
             return;
         }
         setCreatingPlaylist(-1);
-
-        console.log("Transfer Context", transferContext);
-        console.log("To From Context", toFromContext);
         setTransferProgess("Transferring, please wait...")
 
         for (let itemFrom of transferContext.items) {
             const indexFrom = itemFrom[0];
             const getTracksFuncFrom = itemFrom[1];
             const tracksListFrom = await getTracksFuncFrom(indexFrom);
-            
-            console.log("FROM AND TC.to", tracksListFrom, transferContext.to)
+            console.log("Item From currently being processed", itemFrom)
 
             if (toFromContext.to == "YouTube") {
                 const updates = await fetch('/api/youtube', {
@@ -75,7 +70,7 @@ export function Transfer() {
                         if (line.trim()) {
                             let transferResponse = JSON.parse(line)
                             
-                            console.log('Transfer response:', transferResponse);
+                            console.log('Transfer response:', transferResponse, "\n---------------");
                             if (transferResponse.playlistIndex != undefined) {
                                 currentPlaylistTo = transferResponse.playlistIndex;
                                 currentToIndex += 1;
@@ -83,7 +78,6 @@ export function Transfer() {
                                 transferContext.to[currentToIndex].push(
                                     await transferContext.to[currentToIndex][1](transferResponse.newPlaylist)
                                 );
-                                console.log("TRANSFER CONTEXT:", transferContext)
                             } else if (transferResponse.kind == "youtube#playlistItem") {
                                 if (transferContext.to[currentToIndex][0] == "create") {
                                     await transferContext.to[currentToIndex][2](
@@ -106,9 +100,12 @@ export function Transfer() {
 
             }
         }
-        for (let i = 0; i < 4; i++) {
-            //Reset create 
-            transferContext.to[createIndex].pop();
+        
+        //Reset to default create functions if transferring to a new playlist
+        if (createIndex != -1) {
+            for (let i = 0; i < 4; i++) {
+                transferContext.to[createIndex].pop();
+            }
         }
         
         setTransferProgess("Transfer complete");
